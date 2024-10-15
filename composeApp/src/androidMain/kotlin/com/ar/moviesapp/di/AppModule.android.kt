@@ -15,7 +15,7 @@ actual class RoomBuilder(
 ) {
     actual fun builder(): RoomDatabase.Builder<AppDataBase> {
         val context = context.applicationContext
-        val dbFile = context.getDatabasePath("todos.db")
+        val dbFile = context.getDatabasePath("${context.packageName}.db")
 
         return Room.databaseBuilder<AppDataBase>(
             context = context,
