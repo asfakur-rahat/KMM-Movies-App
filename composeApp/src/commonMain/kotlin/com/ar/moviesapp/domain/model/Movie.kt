@@ -1,21 +1,41 @@
 package com.ar.moviesapp.domain.model
 
-import kotlinx.serialization.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class Movie(
-    private val adult: Boolean = true,
-    private val backdrop_path: String = "",
-    private val genre_ids: List<Int> = emptyList(),
-    private val id: Int = 0,
-    private val original_language: String = "",
-    private val original_title: String = "",
-    private val overview: String = "",
-    private val popularity: Double = 0.0,
-    private val poster_path: String = "",
-    private val release_date: String = "",
-    private val title: String = "",
-    private val video: Boolean = true,
-    private val vote_average: Double = 0.0,
-    private val vote_count: Int = 0,
+    var adult: Boolean = true,
+
+    @SerialName("backdrop_path")
+    var backdropPath: String = "",
+
+    @SerialName("genre_ids")
+    var genreIds: List<Int> = emptyList(),
+
+    var id: Int = 0,
+
+    @SerialName("original_language")
+    var originalLanguage: String = "",
+
+    @SerialName("original_title")
+    var originalTitle: String = "",
+
+    var overview: String = "",
+    var popularity: Double = 0.0,
+
+    @SerialName("poster_path")
+    var posterPath: String = "",
+
+    @SerialName("release_date")
+    var releaseDate: String = "",
+
+    var title: String = "",
+    var video: Boolean = true,
+
+    @SerialName("vote_average")
+    var voteAverage: Double = 0.0,
+
+    @SerialName("vote_count")
+    var voteCount: Int = 0,
 )

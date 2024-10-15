@@ -7,16 +7,21 @@ import com.ar.moviesapp.data.remote.api.MovieApi
 import com.ar.moviesapp.data.remote.apiImpl.MovieApiImpl
 import com.ar.moviesapp.data.repositoryImpl.MovieRepositoryImpl
 import com.ar.moviesapp.domain.repository.MovieRepository
+import com.ar.moviesapp.presentation.screens.home.HomeViewModel
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
-import org.koin.dsl.binds
 import org.koin.dsl.module
+
+class DataModule {
+    fun httpClientEngine(): HttpClientEngine = createHttpClientEngine()
+}
 
 expect fun createHttpClientEngine(): HttpClientEngine
 
@@ -34,21 +39,19 @@ fun getRoomDatabase(
 }
 
 val appModule = module{
-    //HttpEngine
     single {
-        createHttpClientEngine()
+        DataModule().httpClientEngine()
     }
-    //HttpClient
-    single {
-        createHttpClient(get())
-    }
-    //RoomDatabase
     single {
         getRoomDatabase(get())
     }
+    //HttpClient
+    single { createHttpClient(get()) }
 
     singleOf(::MovieApiImpl).bind(MovieApi::class)
     singleOf(::MovieRepositoryImpl).bind(MovieRepository::class)
+
+    viewModelOf(::HomeViewModel)
 
 }
 

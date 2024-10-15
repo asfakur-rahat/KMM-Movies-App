@@ -1,7 +1,7 @@
 package com.ar.moviesapp.core.networkUtils
 
-import io.ktor.client.call.body
-import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.*
+import io.ktor.client.call.*
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
 
@@ -9,40 +9,45 @@ suspend inline fun <reified T> callApiService(
     api: suspend () -> HttpResponse,
     onSuccess: (T) -> Unit,
     onError: (NetworkError) -> Unit,
-){
-
+) {
+//    println("I Am call service")
     try {
         val response = api.invoke()
+//        println("Response Status: ${response.status}")
+//        println("Raw Response Body: ${response.bodyAsText()}") // Log raw response as text
         handleResult<T>(
             response,
-            onSuccess = {
-                onSuccess.invoke(it)
-            },
-            onError = {
-                onError.invoke(it)
-            }
+            onSuccess = { onSuccess.invoke(it) },
+            onError = { onError.invoke(it) }
         )
     } catch (e: UnresolvedAddressException) {
         return onError(NetworkError.NO_INTERNET)
     } catch (e: SerializationException) {
         return onError(NetworkError.SERIALIZATION)
+    } catch (e: Exception) {
+        return onError(NetworkError.UNKNOWN)
     }
-
 }
-
 
 suspend inline fun <reified T> handleResult(
     result: HttpResponse,
     onSuccess: (T) -> Unit,
     onError: (NetworkError) -> Unit,
 ) {
+//    println("I Am handle result")
     try {
         when (result.status.value) {
             in 200..299 -> {
-                val responseBody: T = result.body()
-                onSuccess.invoke(responseBody)
+//                println("I Am in 200")
+                try {
+                    val responseBody: T = result.body()
+//                    println("Parsed Response: $responseBody")
+                    onSuccess.invoke(responseBody)
+                } catch (e: SerializationException) {
+//                    println("Serialization error: ${e.message}")
+                    onError(NetworkError.SERIALIZATION)
+                }
             }
-
             401 -> onError(NetworkError.UNAUTHORIZED)
             409 -> onError(NetworkError.CONFLICT)
             408 -> onError(NetworkError.REQUEST_TIMEOUT)
@@ -51,6 +56,7 @@ suspend inline fun <reified T> handleResult(
             else -> onError(NetworkError.UNKNOWN)
         }
     } catch (e: Exception) {
+//        println("Unknown error: ${e.message}")
         onError(NetworkError.UNKNOWN)
     }
 }

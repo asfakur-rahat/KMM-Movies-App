@@ -13,3 +13,7 @@ fun String.toOriginalImage(): String {
     val path = this
     return "$baseUrl$size$path"
 }
+
+inline fun <reified T : Any> Any.cast(): T {
+    return this as T
+}
