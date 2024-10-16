@@ -27,12 +27,42 @@ class HomeViewModel(
     }
 
     private fun fetchMovies() = safeLaunch {
-        println("Here")
         repository.getTopRatedMovies(MovieRequest(language = "en-US", page = 1))
             .onSuccess {
                 _uiState = _uiState.copy(
                     topFiveMovie = it.take(5),
                     topRatedMovie = it
+                )
+                setState(BaseUiState.Data(_uiState))
+            }
+            .onError {
+                setState(BaseUiState.Error(Throwable(message = it.name)))
+            }
+        repository.getNowPlayingMovies(MovieRequest(language = "en-US", page = 1))
+            .onSuccess {
+                _uiState = _uiState.copy(
+                    nowPlayingMovie = it
+                )
+                setState(BaseUiState.Data(_uiState))
+            }
+            .onError {
+                setState(BaseUiState.Error(Throwable(message = it.name)))
+            }
+        repository.getUpcomingMovies(MovieRequest(language = "en-US", page = 1))
+            .onSuccess {
+                _uiState = _uiState.copy(
+                    upcomingMovie = it
+                )
+                setState(BaseUiState.Data(_uiState))
+            }
+            .onError {
+                setState(BaseUiState.Error(Throwable(message = it.name)))
+            }
+
+        repository.getPopularMovies(MovieRequest(language = "en-US", page = 1))
+            .onSuccess {
+                _uiState = _uiState.copy(
+                    popularMovie = it
                 )
                 setState(BaseUiState.Data(_uiState))
             }

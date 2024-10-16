@@ -23,8 +23,30 @@ class MovieRepositoryImpl(
         return Result.Error(NetworkError.UNKNOWN)
     }
 
+    override suspend fun getUpcomingMovies(request: MovieRequest): Result<List<Movie>, NetworkError> {
+        api.getUpcomingMovies(request)
+            .onSuccess {
+                return Result.Success(it.results)
+            }
+            .onError {
+                return Result.Error(it)
+            }
+        return Result.Error(NetworkError.UNKNOWN)
+    }
+
     override suspend fun getTopRatedMovies(request: MovieRequest): Result<List<Movie>, NetworkError> {
         api.getTopRatedMovies(request)
+            .onSuccess {
+                return Result.Success(it.results)
+            }
+            .onError {
+                return Result.Error(it)
+            }
+        return Result.Error(NetworkError.UNKNOWN)
+    }
+
+    override suspend fun getPopularMovies(request: MovieRequest): Result<List<Movie>, NetworkError> {
+        api.getPopularMovies(request)
             .onSuccess {
                 return Result.Success(it.results)
             }

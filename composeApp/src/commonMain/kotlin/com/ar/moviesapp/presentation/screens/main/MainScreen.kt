@@ -64,14 +64,16 @@ fun MainScreen() {
                 )
             ){
                 BottomNavigation(navItemList, currentRoute){
-                    navController.navigate(it.route){
-                        navController.graph.startDestinationRoute?.let { route->
-                            popUpTo(route){
-                                saveState = true
+                    if(it.route != currentRoute){
+                        navController.navigate(it.route){
+                            navController.graph.startDestinationRoute?.let { route->
+                                popUpTo(route){
+                                    saveState = true
+                                }
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 }
             }

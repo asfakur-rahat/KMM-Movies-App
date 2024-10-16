@@ -25,7 +25,6 @@ fun PaddingValues.getExtraTopPadding(): PaddingValues {
     return PaddingValues(
         start = this.calculateStartPadding(LayoutDirection.Ltr) + 15.dp,
         end = this.calculateEndPadding(LayoutDirection.Ltr) + 15.dp,
-        bottom = this.calculateBottomPadding(),
-        top = this.calculateTopPadding() + 20.dp
+        top = this.calculateTopPadding()
     )
 }

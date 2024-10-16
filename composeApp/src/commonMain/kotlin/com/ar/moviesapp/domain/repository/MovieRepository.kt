@@ -7,5 +7,7 @@ import com.ar.moviesapp.domain.model.Movie
 
 interface MovieRepository {
     suspend fun getNowPlayingMovies(request: MovieRequest): Result<List<Movie>, NetworkError>
+    suspend fun getUpcomingMovies(request: MovieRequest): Result<List<Movie>, NetworkError>
     suspend fun getTopRatedMovies(request: MovieRequest): Result<List<Movie>, NetworkError>
+    suspend fun getPopularMovies(request: MovieRequest): Result<List<Movie>, NetworkError>
 }

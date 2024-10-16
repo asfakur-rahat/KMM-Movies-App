@@ -9,15 +9,20 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SearchBarDefaults.inputFieldColors
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -36,19 +41,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ar.moviesapp.core.base.BaseUiState
+import com.ar.moviesapp.core.components.Colors
 import com.ar.moviesapp.core.components.Colors.backGround
 import com.ar.moviesapp.core.components.Colors.onBackGround
+import com.ar.moviesapp.core.components.Colors.onSearchContainer
+import com.ar.moviesapp.core.components.Colors.searchContainer
 import com.ar.moviesapp.core.components.EmptyScreen
 import com.ar.moviesapp.core.components.ErrorScreen
 import com.ar.moviesapp.core.components.LoadingScreen
 import com.ar.moviesapp.core.utils.cast
 import com.ar.moviesapp.core.utils.getExtraTopPadding
 import com.ar.moviesapp.core.utils.getPaddingWithoutTop
+import com.ar.moviesapp.core.utils.getSplashPadding
 import com.ar.moviesapp.domain.model.Movie
 import com.ar.moviesapp.presentation.components.MovieCard
 import com.ar.moviesapp.presentation.components.TopMovieCard
 import com.ar.moviesapp.presentation.navigation.AppScreen
 import kotlinx.coroutines.launch
+import movies.composeapp.generated.resources.Res
+import movies.composeapp.generated.resources.ic_search
+import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -96,7 +108,7 @@ enum class Tabs(val text: String) {
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContent(
     paddingValues: PaddingValues,
@@ -113,10 +125,10 @@ fun HomeScreenContent(
         contentAlignment = Alignment.Center
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(top = paddingValues.calculateTopPadding() + 15.dp),
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = paddingValues.getExtraTopPadding()
+            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+            contentPadding = PaddingValues(start = 15.dp, end = 15.dp)
         ) {
             item {
                 Text(
@@ -128,6 +140,36 @@ fun HomeScreenContent(
                         fontWeight = FontWeight.SemiBold
                     )
                 )
+                SearchBar(
+                    query = "",
+                    onQueryChange = {},
+                    onSearch = {},
+                    onActiveChange = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text(text = "Search") },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.ic_search),
+                            contentDescription = null,
+                            tint = onSearchContainer
+                        )
+                    },
+                    active = false,
+                    colors = SearchBarDefaults.colors(
+                        containerColor = searchContainer,
+                        inputFieldColors = inputFieldColors(
+                            focusedTextColor = onBackGround,
+                            unfocusedTextColor = onBackGround,
+                            disabledTextColor = onBackGround,
+                            focusedPlaceholderColor = onSearchContainer,
+                            unfocusedPlaceholderColor = onSearchContainer,
+                            disabledPlaceholderColor = onSearchContainer,
+                            cursorColor = onSearchContainer,
+                        )
+                    ),
+                    shape = RoundedCornerShape(25)
+                ) {
+                }
             }
             item {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.Start)) {
@@ -176,18 +218,21 @@ fun HomeScreenContent(
                         .fillMaxWidth()
                         .padding(top = 20.dp)
                 ) {
-                    when(Tabs.entries[selectedTabIndex.value].text){
-                        "Upcoming" ->{
-                            UpcomingMovies(Modifier, uiState.topFiveMovie)
+                    when (Tabs.entries[selectedTabIndex.value].text) {
+                        "Upcoming" -> {
+                            UpcomingMovies(Modifier, uiState.upcomingMovie)
                         }
-                        "Top Rated" ->{
+
+                        "Top Rated" -> {
                             TopRatedMovies(Modifier, uiState.topRatedMovie)
                         }
+
                         "Popular" -> {
-                            PopularMovies(Modifier, uiState.topFiveMovie)
+                            PopularMovies(Modifier, uiState.popularMovie)
                         }
-                        else ->{
-                            NowPlayingMovies(Modifier, uiState.topRatedMovie)
+
+                        else -> {
+                            NowPlayingMovies(Modifier, uiState.nowPlayingMovie)
                         }
                     }
                 }
@@ -201,16 +246,16 @@ fun HomeScreenContent(
 fun NowPlayingMovies(
     modifier: Modifier,
     movies: List<Movie> = emptyList(),
-    onclick: (Movie) -> Unit = {}
+    onclick: (Movie) -> Unit = {},
 ) {
     FlowRow(
         modifier = modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalArrangement = Arrangement.spacedBy(16.dp),
         maxItemsInEachRow = 3
-    ){
+    ) {
         movies.forEachIndexed { index, movie ->
-            MovieCard(data = movie, index = index){
+            MovieCard(data = movie, index = index) {
                 onclick.invoke(it)
             }
         }
@@ -222,16 +267,16 @@ fun NowPlayingMovies(
 fun UpcomingMovies(
     modifier: Modifier,
     movies: List<Movie> = emptyList(),
-    onclick: (Movie) -> Unit = {}
+    onclick: (Movie) -> Unit = {},
 ) {
     FlowRow(
         modifier = modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalArrangement = Arrangement.spacedBy(16.dp),
         maxItemsInEachRow = 3
-    ){
+    ) {
         movies.forEachIndexed { index, movie ->
-            MovieCard(data = movie, index = index){
+            MovieCard(data = movie, index = index) {
                 onclick.invoke(it)
             }
         }
@@ -243,16 +288,16 @@ fun UpcomingMovies(
 fun TopRatedMovies(
     modifier: Modifier,
     movies: List<Movie> = emptyList(),
-    onclick: (Movie) -> Unit = {}
+    onclick: (Movie) -> Unit = {},
 ) {
     FlowRow(
         modifier = modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalArrangement = Arrangement.spacedBy(16.dp),
         maxItemsInEachRow = 3
-    ){
+    ) {
         movies.forEachIndexed { index, movie ->
-            MovieCard(data = movie, index = index){
+            MovieCard(data = movie, index = index) {
                 onclick.invoke(it)
             }
         }
@@ -264,16 +309,16 @@ fun TopRatedMovies(
 fun PopularMovies(
     modifier: Modifier,
     movies: List<Movie> = emptyList(),
-    onclick: (Movie) -> Unit = {}
+    onclick: (Movie) -> Unit = {},
 ) {
     FlowRow(
         modifier = modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalArrangement = Arrangement.spacedBy(16.dp),
         maxItemsInEachRow = 3
-    ){
+    ) {
         movies.forEachIndexed { index, movie ->
-            MovieCard(data = movie, index = index){
+            MovieCard(data = movie, index = index) {
                 onclick.invoke(it)
             }
         }
