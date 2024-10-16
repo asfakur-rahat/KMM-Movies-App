@@ -7,6 +7,7 @@ import com.ar.moviesapp.data.remote.api.MovieApi
 import com.ar.moviesapp.data.remote.apiImpl.MovieApiImpl
 import com.ar.moviesapp.data.repositoryImpl.MovieRepositoryImpl
 import com.ar.moviesapp.domain.repository.MovieRepository
+import com.ar.moviesapp.presentation.screens.details.DetailsViewModel
 import com.ar.moviesapp.presentation.screens.home.HomeViewModel
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.coroutines.CoroutineDispatcher
@@ -52,6 +53,7 @@ val appModule = module{
     singleOf(::MovieRepositoryImpl).bind(MovieRepository::class)
 
     viewModelOf(::HomeViewModel)
+    viewModelOf(::DetailsViewModel)
 
 }
 

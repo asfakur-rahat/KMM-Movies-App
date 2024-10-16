@@ -26,7 +26,7 @@ fun SplashScreen(
     paddingValues: PaddingValues
 ) {
     LaunchedEffect(Unit) {
-        delay(4000)
+        delay(500)
         onNavigateToHome()
     }
     Box(

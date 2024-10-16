@@ -43,7 +43,7 @@ fun TopMovieCard(
         painterResource(Res.drawable.ic_4),
         painterResource(Res.drawable.ic_5)
     )
-    Box(modifier = modifier.height(230.dp).width(160.dp)) {
+    Box(modifier = modifier.height(230.dp).width(160.dp).clickable { onClick.invoke(data) }) {
         CoilImage(
             modifier = Modifier
                 .padding(start = 15.dp)

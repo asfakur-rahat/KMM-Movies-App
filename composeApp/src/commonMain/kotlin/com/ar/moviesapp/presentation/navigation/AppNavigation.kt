@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.ar.moviesapp.presentation.screens.details.DetailsScreen
 import com.ar.moviesapp.presentation.screens.home.HomeScreen
 import com.ar.moviesapp.presentation.screens.splash.SplashScreen
 
@@ -26,7 +27,15 @@ fun AppNavigation(
         }
         mainGraph(navController, paddingValues)
         composable(route = AppScreen.Details.route) {
-
+            val movieId = it.arguments?.getString("movieId")?.toIntOrNull() ?: 0
+            //println(movieId)
+            DetailsScreen(
+                paddingValues = paddingValues,
+                goBack = {
+                    navController.navigateUp()
+                },
+                movieId = movieId
+            )
         }
     }
 }
@@ -35,7 +44,7 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController, paddingValues: P
     navigation(route = AppScreen.Main.route, startDestination = AppScreen.Home.route) {
         composable(route = AppScreen.Home.route) {
             HomeScreen(paddingValues){
-
+                navController.navigate("details/$it")
             }
         }
         composable(route = AppScreen.Search.route) {
@@ -53,9 +62,8 @@ sealed class AppScreen(
 ) {
     data object Splash : AppScreen("splash")
     data object Main : AppScreen("main")
-    data object Details : AppScreen("details")
+    data object Details : AppScreen("details/{movieId}")
     data object Home : AppScreen("main/home")
     data object Search : AppScreen("main/search")
     data object WatchList : AppScreen("main/watchlist")
-
 }

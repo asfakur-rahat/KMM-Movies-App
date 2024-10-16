@@ -5,6 +5,9 @@ import com.ar.moviesapp.core.networkUtils.Result
 import com.ar.moviesapp.core.networkUtils.callApiService
 import com.ar.moviesapp.data.remote.api.MovieApi
 import com.ar.moviesapp.data.remote.model.request.MovieRequest
+import com.ar.moviesapp.data.remote.model.response.MovieCastResponse
+import com.ar.moviesapp.data.remote.model.response.MovieDetailsResponse
+import com.ar.moviesapp.data.remote.model.response.MovieReviewResponse
 import com.ar.moviesapp.data.remote.model.response.NowPlayingMovieResponse
 import com.ar.moviesapp.data.remote.model.response.PopularMovieResponse
 import com.ar.moviesapp.data.remote.model.response.TopRatedMovieResponse
@@ -88,6 +91,64 @@ class MovieApiImpl(
                 }
             },
             onSuccess = {
+                return Result.Success(it)
+            },
+            onError = {
+                return Result.Error(it)
+            }
+        )
+        return Result.Error(NetworkError.UNKNOWN)
+    }
+
+    override suspend fun getMovieDetails(movieId: Int): Result<MovieDetailsResponse, NetworkError> {
+        println("apiImpl")
+        callApiService<MovieDetailsResponse>(
+            api = {
+                client.get("${BASE_URL}/movie/$movieId"){
+                    parameter("language", "en-US")
+                    parameter("api_key", API_KEY)
+                }
+            },
+            onSuccess = {
+                return Result.Success(it)
+            },
+            onError = {
+                return Result.Error(it)
+            }
+        )
+        return Result.Error(NetworkError.UNKNOWN)
+    }
+
+    override suspend fun getMovieCast(movieId: Int): Result<MovieCastResponse, NetworkError> {
+        callApiService<MovieCastResponse>(
+            api = {
+                client.get("${BASE_URL}/movie/$movieId/credits"){
+                    parameter("language", "en-US")
+                    parameter("api_key", API_KEY)
+                }
+            },
+            onSuccess = {
+                println(it)
+                return Result.Success(it)
+            },
+            onError = {
+                return Result.Error(it)
+            }
+        )
+        return Result.Error(NetworkError.UNKNOWN)
+    }
+
+    override suspend fun getMovieReview(movieId: Int): Result<MovieReviewResponse, NetworkError> {
+        callApiService<MovieReviewResponse>(
+            api = {
+                client.get("${BASE_URL}/movie/$movieId/reviews"){
+                    parameter("language", "en-US")
+                    parameter("page", 1)
+                    parameter("api_key", API_KEY)
+                }
+            },
+            onSuccess = {
+                println(it)
                 return Result.Success(it)
             },
             onError = {

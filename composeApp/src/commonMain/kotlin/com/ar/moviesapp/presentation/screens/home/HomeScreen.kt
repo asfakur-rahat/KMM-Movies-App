@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ar.moviesapp.core.base.BaseUiState
-import com.ar.moviesapp.core.components.Colors
 import com.ar.moviesapp.core.components.Colors.backGround
 import com.ar.moviesapp.core.components.Colors.onBackGround
 import com.ar.moviesapp.core.components.Colors.onSearchContainer
@@ -50,13 +49,10 @@ import com.ar.moviesapp.core.components.EmptyScreen
 import com.ar.moviesapp.core.components.ErrorScreen
 import com.ar.moviesapp.core.components.LoadingScreen
 import com.ar.moviesapp.core.utils.cast
-import com.ar.moviesapp.core.utils.getExtraTopPadding
 import com.ar.moviesapp.core.utils.getPaddingWithoutTop
-import com.ar.moviesapp.core.utils.getSplashPadding
 import com.ar.moviesapp.domain.model.Movie
 import com.ar.moviesapp.presentation.components.MovieCard
 import com.ar.moviesapp.presentation.components.TopMovieCard
-import com.ar.moviesapp.presentation.navigation.AppScreen
 import kotlinx.coroutines.launch
 import movies.composeapp.generated.resources.Res
 import movies.composeapp.generated.resources.ic_search
@@ -66,7 +62,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
-    onNavigateToDetails: () -> Unit,
+    onNavigateToDetails: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<HomeViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -85,7 +81,7 @@ fun HomeScreen(
                     viewModel.onTriggerEvent(it)
                 },
                 onNavigation = {
-
+                    onNavigateToDetails.invoke(it)
                 }
             )
         }
@@ -114,7 +110,7 @@ fun HomeScreenContent(
     paddingValues: PaddingValues,
     uiState: HomeScreenUiState,
     onEvent: (HomeScreenEvent) -> Unit,
-    onNavigation: (AppScreen) -> Unit,
+    onNavigation: (String) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 4 })
@@ -125,7 +121,8 @@ fun HomeScreenContent(
         contentAlignment = Alignment.Center
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(top = paddingValues.calculateTopPadding() + 15.dp),
+            modifier = Modifier.fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding() + 15.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
             contentPadding = PaddingValues(start = 15.dp, end = 15.dp)
@@ -178,7 +175,7 @@ fun HomeScreenContent(
                             data = item,
                             index = index,
                             onClick = {
-
+                                onNavigation.invoke(it.id.toString())
                             }
                         )
                     }
@@ -194,7 +191,7 @@ fun HomeScreenContent(
                     indicator = { tabPositions ->
                         TabRowDefaults.SecondaryIndicator(
                             Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex.value]),
-                            color = onBackGround
+                            color = searchContainer
                         )
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -220,19 +217,27 @@ fun HomeScreenContent(
                 ) {
                     when (Tabs.entries[selectedTabIndex.value].text) {
                         "Upcoming" -> {
-                            UpcomingMovies(Modifier, uiState.upcomingMovie)
+                            UpcomingMovies(Modifier, uiState.upcomingMovie) {
+                                onNavigation.invoke(it.id.toString())
+                            }
                         }
 
                         "Top Rated" -> {
-                            TopRatedMovies(Modifier, uiState.topRatedMovie)
+                            TopRatedMovies(Modifier, uiState.topRatedMovie) {
+                                onNavigation.invoke(it.id.toString())
+                            }
                         }
 
                         "Popular" -> {
-                            PopularMovies(Modifier, uiState.popularMovie)
+                            PopularMovies(Modifier, uiState.popularMovie) {
+                                onNavigation.invoke(it.id.toString())
+                            }
                         }
 
                         else -> {
-                            NowPlayingMovies(Modifier, uiState.nowPlayingMovie)
+                            NowPlayingMovies(Modifier, uiState.nowPlayingMovie) {
+                                onNavigation.invoke(it.id.toString())
+                            }
                         }
                     }
                 }

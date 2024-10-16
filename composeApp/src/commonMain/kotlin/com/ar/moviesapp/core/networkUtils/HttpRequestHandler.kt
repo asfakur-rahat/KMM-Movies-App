@@ -1,7 +1,7 @@
 package com.ar.moviesapp.core.networkUtils
 
-import io.ktor.client.statement.*
-import io.ktor.client.call.*
+import io.ktor.client.call.body
+import io.ktor.client.statement.HttpResponse
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
 
@@ -17,7 +17,10 @@ suspend inline fun <reified T> callApiService(
 //        println("Raw Response Body: ${response.bodyAsText()}") // Log raw response as text
         handleResult<T>(
             response,
-            onSuccess = { onSuccess.invoke(it) },
+            onSuccess = {
+                println("Success Response: $it")
+                onSuccess.invoke(it)
+            },
             onError = { onError.invoke(it) }
         )
     } catch (e: UnresolvedAddressException) {
@@ -38,16 +41,17 @@ suspend inline fun <reified T> handleResult(
     try {
         when (result.status.value) {
             in 200..299 -> {
-//                println("I Am in 200")
+                println("I Am in 200")
                 try {
                     val responseBody: T = result.body()
-//                    println("Parsed Response: $responseBody")
+                    println("Parsed Response: $responseBody")
                     onSuccess.invoke(responseBody)
                 } catch (e: SerializationException) {
 //                    println("Serialization error: ${e.message}")
                     onError(NetworkError.SERIALIZATION)
                 }
             }
+
             401 -> onError(NetworkError.UNAUTHORIZED)
             409 -> onError(NetworkError.CONFLICT)
             408 -> onError(NetworkError.REQUEST_TIMEOUT)
@@ -56,7 +60,7 @@ suspend inline fun <reified T> handleResult(
             else -> onError(NetworkError.UNKNOWN)
         }
     } catch (e: Exception) {
-//        println("Unknown error: ${e.message}")
+        println("Unknown error: ${e.message}")
         onError(NetworkError.UNKNOWN)
     }
 }
