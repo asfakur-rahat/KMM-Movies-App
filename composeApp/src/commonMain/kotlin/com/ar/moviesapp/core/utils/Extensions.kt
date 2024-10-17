@@ -25,6 +25,7 @@ fun Double.toRating(): String {
 }
 
 fun String.onlyYear(): String{
+    if(this.isEmpty()) return "N/A"
     return this.substringBefore("-")
 }
 

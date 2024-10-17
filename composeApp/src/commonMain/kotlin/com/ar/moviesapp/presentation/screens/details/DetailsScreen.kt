@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -54,6 +55,7 @@ import com.ar.moviesapp.core.components.Colors.stroke
 import com.ar.moviesapp.core.components.EmptyScreen
 import com.ar.moviesapp.core.components.ErrorScreen
 import com.ar.moviesapp.core.components.LoadingScreen
+import com.ar.moviesapp.core.utils.ScreenSize
 import com.ar.moviesapp.core.utils.cast
 import com.ar.moviesapp.core.utils.getPaddingWithoutTop
 import com.ar.moviesapp.core.utils.onlyYear
@@ -77,6 +79,7 @@ import network.chaintech.sdpcomposemultiplatform.sdp
 import network.chaintech.sdpcomposemultiplatform.ssp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -128,6 +131,7 @@ fun DetailsScreenContent(
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 3 })
     val selectedTabIndex = remember { derivedStateOf { pagerState.currentPage } }
+    val screen = koinInject<ScreenSize>()
 
     Column(
         modifier = Modifier.fillMaxSize().padding(paddingValues.getPaddingWithoutTop())
@@ -299,11 +303,11 @@ fun DetailsScreenContent(
                         .padding(top = 16.sdp)
                 ) {
                     when (MovieTabs.entries[selectedTabIndex.value].text) {
-                        "Cast" -> MovieCastList(Modifier, uiState.movieCast.take(10))
+                        "Cast" -> MovieCastList(Modifier, uiState.movieCast.take(15))
                         "Reviews" -> MovieReviewList(Modifier, uiState.movieReview)
                         else -> {
                             Box(
-                                modifier = Modifier.fillMaxWidth().height(231.sdp),
+                                modifier = Modifier.fillMaxSize().heightIn(max = screen.getHeight().dp),
                                 contentAlignment = Alignment.TopStart
                             ) {
                                 Text(
@@ -391,7 +395,8 @@ fun MovieReviewCard(
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontSize = 16.ssp,
                     textAlign = TextAlign.Start
-                )
+                ),
+                lineHeight = 18.ssp
             )
             Spacer(Modifier.height(6.sdp))
             Text(

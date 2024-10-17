@@ -7,3 +7,9 @@ data class SearchScreenUiState(
     val searchMode: Boolean = false,
     val searchResult: List<SearchedMovie> = emptyList(),
 )
+
+sealed interface SearchScreenEvent {
+    data class OnSearch(val query: String): SearchScreenEvent
+    data class OnSearchMode(val isActive: Boolean): SearchScreenEvent
+    data class OnSearchQueryChange(val query: String): SearchScreenEvent
+}

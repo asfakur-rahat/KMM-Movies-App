@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.ar.moviesapp.presentation.screens.details.DetailsScreen
 import com.ar.moviesapp.presentation.screens.home.HomeScreen
+import com.ar.moviesapp.presentation.screens.search.SearchScreen
 import com.ar.moviesapp.presentation.screens.splash.SplashScreen
 
 @Composable
@@ -48,7 +49,23 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController, paddingValues: P
             }
         }
         composable(route = AppScreen.Search.route) {
-
+            SearchScreen(
+                paddingValues = paddingValues,
+                goBack = {
+                    navController.navigate("main/home"){
+                        navController.graph.startDestinationRoute?.let { route->
+                            popUpTo(route){
+                                saveState = true
+                            }
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                goToDetails = {
+                    navController.navigate("details/$it")
+                }
+            )
         }
         composable(route = AppScreen.WatchList.route) {
 

@@ -182,7 +182,7 @@ fun SearchResultCard(
                 Spacer(Modifier.height(6.sdp))
                 InfoChip(
                     icon = Res.drawable.ic_calender,
-                    text = movie.releaseDate,
+                    text = movie.releaseDate.ifEmpty { "N/A" },
                     color = onBackGround
                 )
             }
