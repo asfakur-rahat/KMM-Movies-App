@@ -101,7 +101,6 @@ fun TopMovieCard(
 fun MovieCard(
     modifier: Modifier = Modifier,
     data: Movie,
-    index: Int = 0,
     onClick: (Movie) -> Unit = {},
 ) {
     Box(modifier = modifier.height(112.sdp).width(77.sdp).clickable { onClick.invoke(data) }) {

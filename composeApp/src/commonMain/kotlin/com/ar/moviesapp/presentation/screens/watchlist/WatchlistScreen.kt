@@ -40,7 +40,6 @@ import com.ar.moviesapp.core.utils.getPaddingWithoutTop
 import com.ar.moviesapp.presentation.components.WatchListMovieCard
 import movies.composeapp.generated.resources.Res
 import movies.composeapp.generated.resources.ic_back
-import movies.composeapp.generated.resources.search_empty
 import movies.composeapp.generated.resources.watchlist_empty
 import network.chaintech.sdpcomposemultiplatform.sdp
 import network.chaintech.sdpcomposemultiplatform.ssp
@@ -67,9 +66,6 @@ fun WatchListScreen(
             WatchListScreenContent(
                 paddingValues = paddingValues,
                 uiState = data,
-                onEvent = {
-                    viewModel.onTriggerEvent(it)
-                },
                 goToDetails = { goToDetails.invoke(it) }
             )
 
@@ -87,7 +83,6 @@ fun WatchListScreen(
 fun WatchListScreenContent(
     paddingValues: PaddingValues,
     uiState: WatchlistScreenUiState,
-    onEvent: (WatchlistScreenEvent) -> Unit,
     goToDetails: (Int) -> Unit = {},
 ){
     val screen = koinInject<ScreenSize>()

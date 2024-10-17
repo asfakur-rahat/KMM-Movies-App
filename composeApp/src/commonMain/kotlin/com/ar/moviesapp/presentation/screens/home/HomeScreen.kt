@@ -44,9 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.BackspaceCommand
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ar.moviesapp.core.base.BaseUiState
 import com.ar.moviesapp.core.components.Colors.backGround
@@ -396,8 +394,8 @@ fun MovieFlowRow(
         verticalArrangement = Arrangement.spacedBy(14.sdp),
         maxItemsInEachRow = 3
     ) {
-        movies.forEachIndexed { index, movie ->
-            MovieCard(data = movie, index = index) {
+        movies.forEachIndexed { _, movie ->
+            MovieCard(data = movie) {
                 onclick.invoke(it)
             }
         }
