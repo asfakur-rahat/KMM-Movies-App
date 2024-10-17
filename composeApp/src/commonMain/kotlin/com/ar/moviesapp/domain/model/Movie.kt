@@ -8,7 +8,7 @@ data class Movie(
     var adult: Boolean = true,
 
     @SerialName("backdrop_path")
-    var backdropPath: String = "",
+    var backdropPath: String? = null,
 
     @SerialName("genre_ids")
     var genreIds: List<Int> = emptyList(),
@@ -38,4 +38,12 @@ data class Movie(
 
     @SerialName("vote_count")
     var voteCount: Int = 0,
+)
+
+@Serializable
+data class TrendingMovie(
+    var id: Int = 0,
+    var title: String = "",
+    @SerialName("poster_path")
+    var posterPath: String = ""
 )

@@ -6,6 +6,7 @@ import com.ar.moviesapp.data.remote.model.response.MovieReview
 
 data class DetailsScreenUiState(
     val movieId: Int = 0,
+    val isBookMarked: Boolean = false,
     val movieDetails: MovieDetailsResponse = MovieDetailsResponse(),
     val movieCast: List<MovieCast> = emptyList(),
     val movieReview: List<MovieReview> = emptyList()
@@ -14,4 +15,5 @@ data class DetailsScreenUiState(
 sealed interface DetailsScreenEvent{
     data class SetMovieId(val movieId: Int): DetailsScreenEvent
     data class FetchMovieDetails(val movieId: Int): DetailsScreenEvent
+    data class AddToWatchList(val movieId: Int): DetailsScreenEvent
 }

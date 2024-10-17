@@ -6,9 +6,15 @@ import com.ar.moviesapp.data.remote.model.request.MovieRequest
 import com.ar.moviesapp.data.remote.model.response.MovieCast
 import com.ar.moviesapp.data.remote.model.response.MovieDetailsResponse
 import com.ar.moviesapp.data.remote.model.response.MovieReview
+import com.ar.moviesapp.data.remote.model.response.SearchedMovie
 import com.ar.moviesapp.domain.model.Movie
+import com.ar.moviesapp.domain.model.TrendingMovie
 
 interface MovieRepository {
+
+    suspend fun getMovieFromSearch(query: String): Result<List<SearchedMovie>, NetworkError>
+    suspend fun getTrendingMovies(): Result<List<TrendingMovie>, NetworkError>
+
     suspend fun getNowPlayingMovies(request: MovieRequest): Result<List<Movie>, NetworkError>
     suspend fun getUpcomingMovies(request: MovieRequest): Result<List<Movie>, NetworkError>
     suspend fun getTopRatedMovies(request: MovieRequest): Result<List<Movie>, NetworkError>

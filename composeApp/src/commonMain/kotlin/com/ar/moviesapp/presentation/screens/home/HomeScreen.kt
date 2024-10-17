@@ -1,7 +1,9 @@
 package com.ar.moviesapp.presentation.screens.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -9,13 +11,18 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,18 +52,24 @@ import com.ar.moviesapp.core.components.Colors.backGround
 import com.ar.moviesapp.core.components.Colors.onBackGround
 import com.ar.moviesapp.core.components.Colors.onSearchContainer
 import com.ar.moviesapp.core.components.Colors.searchContainer
+import com.ar.moviesapp.core.components.Colors.stroke
 import com.ar.moviesapp.core.components.EmptyScreen
 import com.ar.moviesapp.core.components.ErrorScreen
 import com.ar.moviesapp.core.components.LoadingScreen
+import com.ar.moviesapp.core.utils.ScreenSize
 import com.ar.moviesapp.core.utils.cast
 import com.ar.moviesapp.core.utils.getPaddingWithoutTop
 import com.ar.moviesapp.domain.model.Movie
 import com.ar.moviesapp.presentation.components.MovieCard
+import com.ar.moviesapp.presentation.components.SearchResultCard
 import com.ar.moviesapp.presentation.components.TopMovieCard
 import kotlinx.coroutines.launch
 import movies.composeapp.generated.resources.Res
 import movies.composeapp.generated.resources.ic_search
+import movies.composeapp.generated.resources.search_empty
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.vectorResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -115,17 +128,21 @@ fun HomeScreenContent(
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 4 })
     val selectedTabIndex = remember { derivedStateOf { pagerState.currentPage } }
+
+    val screen = koinInject<ScreenSize>()
+
     Box(
         modifier = Modifier.fillMaxSize().padding(paddingValues.getPaddingWithoutTop())
             .background(backGround),
         contentAlignment = Alignment.Center
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxWidth()
+                .heightIn(max = 1000.dp)
                 .padding(top = paddingValues.calculateTopPadding() + 15.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
-            contentPadding = PaddingValues(start = 15.dp, end = 15.dp)
+            contentPadding = PaddingValues(start = 15.dp, end = 15.dp, bottom = 30.dp)
         ) {
             item {
                 Text(
@@ -138,12 +155,20 @@ fun HomeScreenContent(
                     )
                 )
                 SearchBar(
-                    query = "",
-                    onQueryChange = {},
-                    onSearch = {},
-                    onActiveChange = {},
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text(text = "Search") },
+                    query = uiState.searchQuery,
+                    onQueryChange = {
+                        onEvent(HomeScreenEvent.OnSearchQueryChange(it))
+                    },
+                    onSearch = {
+                        onEvent(HomeScreenEvent.OnSearch(it))
+                    },
+                    onActiveChange = {
+                        onEvent(HomeScreenEvent.OnSearchMode(it))
+                    },
+                    modifier = Modifier.fillMaxWidth().heightIn(
+                        max = screen.getHeight().dp
+                    ),
+                    placeholder = { Text(text = "Search using title") },
                     trailingIcon = {
                         Icon(
                             imageVector = vectorResource(Res.drawable.ic_search),
@@ -151,9 +176,10 @@ fun HomeScreenContent(
                             tint = onSearchContainer
                         )
                     },
-                    active = false,
+                    active = uiState.searchMode,
                     colors = SearchBarDefaults.colors(
                         containerColor = searchContainer,
+                        dividerColor = stroke,
                         inputFieldColors = inputFieldColors(
                             focusedTextColor = onBackGround,
                             unfocusedTextColor = onBackGround,
@@ -166,6 +192,52 @@ fun HomeScreenContent(
                     ),
                     shape = RoundedCornerShape(25)
                 ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = screen.getHeight().dp),
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+                        contentPadding = PaddingValues(start = 15.dp, end = 15.dp)
+                    ) {
+                        item {
+                            Box(modifier = Modifier.fillMaxWidth().height(50.dp)) {
+                                Icon(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterEnd)
+                                        .padding(end = 10.dp)
+                                        .size(36.dp)
+                                        .clickable {
+                                            onEvent(HomeScreenEvent.OnSearchMode(false))
+                                        },
+                                    imageVector = Icons.Default.Close, contentDescription = "close",
+                                    tint = onBackGround
+                                )
+                            }
+                        }
+                        itemsIndexed(uiState.searchResult) { _, movie ->
+                            SearchResultCard(
+                                modifier = Modifier,
+                                movie = movie
+                            ) {
+                                onNavigation.invoke(it.id.toString())
+                            }
+                        }
+                        if(uiState.searchResult.isEmpty()){
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 100.dp)
+                                        .heightIn(max = screen.getHeight().dp),
+                                    contentAlignment = Alignment.Center
+                                ){
+                                    Image(painter = painterResource(Res.drawable.search_empty), contentDescription = null)
+                                }
+
+                            }
+                        }
+                    }
                 }
             }
             item {

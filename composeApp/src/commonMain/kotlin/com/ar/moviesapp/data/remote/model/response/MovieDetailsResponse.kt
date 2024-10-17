@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MovieDetailsResponse(
     var adult: Boolean = true,
-    @SerialName("backdrop_path") var backdropPath: String = "",
+    @SerialName("backdrop_path") var backdropPath: String? = null,
     var budget: Int = 0,
     var genres: List<Genre> = emptyList(),
     var id: Int = 0,

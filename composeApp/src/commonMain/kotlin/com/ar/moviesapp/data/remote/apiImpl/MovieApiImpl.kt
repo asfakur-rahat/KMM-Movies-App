@@ -8,9 +8,11 @@ import com.ar.moviesapp.data.remote.model.request.MovieRequest
 import com.ar.moviesapp.data.remote.model.response.MovieCastResponse
 import com.ar.moviesapp.data.remote.model.response.MovieDetailsResponse
 import com.ar.moviesapp.data.remote.model.response.MovieReviewResponse
+import com.ar.moviesapp.data.remote.model.response.MovieSearchResponse
 import com.ar.moviesapp.data.remote.model.response.NowPlayingMovieResponse
 import com.ar.moviesapp.data.remote.model.response.PopularMovieResponse
 import com.ar.moviesapp.data.remote.model.response.TopRatedMovieResponse
+import com.ar.moviesapp.data.remote.model.response.TrendingMovieResponse
 import com.ar.moviesapp.data.remote.model.response.UpcomingMovieResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -22,6 +24,44 @@ class MovieApiImpl(
     companion object{
         private const val BASE_URL = "https://api.themoviedb.org/3"
         private const val API_KEY = "d769d990b72bac3230103f9f87450ea3"
+    }
+
+    override suspend fun getMovieFromSearch(query: String): Result<MovieSearchResponse, NetworkError> {
+        callApiService<MovieSearchResponse>(
+            api = {
+                client.get("${BASE_URL}/search/movie"){
+                    parameter("page", 1)
+                    parameter("language", "en-US")
+                    parameter("api_key", API_KEY)
+                    parameter("query", query)
+                }
+            },
+            onSuccess = {
+                return Result.Success(it)
+            },
+            onError = {
+                return Result.Error(it)
+            }
+        )
+        return Result.Error(NetworkError.UNKNOWN)
+    }
+
+    override suspend fun getTrendingMovies(): Result<TrendingMovieResponse, NetworkError> {
+        callApiService<TrendingMovieResponse>(
+            api = {
+                client.get("${BASE_URL}/trending/movie/day"){
+                    parameter("language", "en-US")
+                    parameter("api_key", API_KEY)
+                }
+            },
+            onSuccess = {
+                return Result.Success(it)
+            },
+            onError = {
+                return Result.Error(it)
+            }
+        )
+        return Result.Error(NetworkError.UNKNOWN)
     }
 
     override suspend fun getNowPlayingMovies(request: MovieRequest): Result<NowPlayingMovieResponse, NetworkError> {

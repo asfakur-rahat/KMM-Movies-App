@@ -2,12 +2,12 @@ package com.ar.moviesapp.presentation.screens.details
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -43,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -159,15 +158,19 @@ fun DetailsScreenContent(
                 )
             )
             Icon(
+                modifier = Modifier.clickable {
+                    onEvent.invoke(DetailsScreenEvent.AddToWatchList(uiState.movieId))
+                },
                 imageVector = vectorResource(Res.drawable.ic_bookmark),
                 contentDescription = "BookMark",
-                tint = onBackGround
+                tint = if (uiState.isBookMarked) rating else onBackGround
             )
         }
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(bottom = 30.dp)
         ) {
             item {
                 Box(
@@ -177,7 +180,10 @@ fun DetailsScreenContent(
                         modifier = Modifier.fillMaxWidth().height(250.dp).align(Alignment.TopCenter)
                             .clip(RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)),
                         imageModel = {
-                            uiState.movieDetails.backdropPath.toOriginalImage()
+                            uiState.movieDetails.backdropPath?.toOriginalImage()
+                        },
+                        failure = {
+                            Box(modifier = Modifier.fillMaxSize().background(onBackGround))
                         }
                     )
                     Row(
@@ -289,7 +295,7 @@ fun DetailsScreenContent(
                         "Reviews" -> MovieReviewList(Modifier, uiState.movieReview)
                         else -> {
                             Box(
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier.fillMaxWidth().height(300.dp),
                                 contentAlignment = Alignment.TopStart
                             ) {
                                 Text(
@@ -324,8 +330,24 @@ fun MovieReviewList(
         verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
         maxItemsInEachRow = 1
     ) {
-        reviews.forEachIndexed{ _, review ->
-            MovieReviewCard(Modifier, review)
+        if (reviews.isEmpty()) {
+            Box(
+                modifier = Modifier.height(300.dp).fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No Reviews",
+                    color = onBackGround,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 24.sp,
+                        textAlign = TextAlign.Center
+                    )
+                )
+            }
+        } else {
+            reviews.forEachIndexed { _, review ->
+                MovieReviewCard(Modifier, review)
+            }
         }
     }
 }
@@ -333,12 +355,12 @@ fun MovieReviewList(
 @Composable
 fun MovieReviewCard(
     modifier: Modifier,
-    review: MovieReview
-){
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.fillMaxWidth()){
-        Column(horizontalAlignment = Alignment.CenterHorizontally){
+    review: MovieReview,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.fillMaxWidth()) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             CoilImage(
-                modifier = Modifier.size(80.dp).clip(CircleShape),
+                modifier = Modifier.size(80.dp).border(1.dp, stroke, CircleShape).clip(CircleShape),
                 imageModel = {
                     review.authorDetails.avatarPath?.toOriginalImage()
                 },
@@ -354,10 +376,23 @@ fun MovieReviewCard(
             Text(text = review.authorDetails.rating?.toString() ?: "0", color = stroke)
         }
         Spacer(Modifier.width(16.dp))
-        Column(horizontalAlignment = Alignment.Start){
-            Text(text = review.author, color = onBackGround)
+        Column(horizontalAlignment = Alignment.Start) {
+            Text(
+                text = review.author,
+                color = onBackGround,
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Start
+                )
+            )
             Spacer(Modifier.height(8.dp))
-            Text(text = review.content, color = onBackGround)
+            Text(
+                text = review.content,
+                color = onBackGround,
+                maxLines = 5,
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 16.sp
+            )
         }
     }
 }
@@ -384,7 +419,7 @@ fun MovieCastList(
 fun CastCard(
     cast: MovieCast,
 ) {
-    Box(modifier = Modifier.size(width = 140.dp, height = 160.dp)) {
+    Box(modifier = Modifier.size(width = 140.dp, height = 170.dp)) {
         CoilImage(
             modifier = Modifier.size(120.dp).align(Alignment.TopCenter).clip(CircleShape),
             imageModel = {
@@ -399,12 +434,15 @@ fun CastCard(
             }
         )
         Text(
-            modifier = Modifier.align(Alignment.BottomCenter),
+            modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
             text = cast.name,
             color = onBackGround,
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = 20.sp
-            )
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
+            ),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -420,17 +458,18 @@ enum class MovieTabs(val text: String) {
 fun InfoChip(
     icon: DrawableResource,
     text: String,
+    color: Color = onSearchContainer
 ) {
     Row {
         Icon(
             imageVector = vectorResource(icon),
             contentDescription = null,
-            tint = onSearchContainer
+            tint = color
         )
         Spacer(Modifier.width(3.dp))
         Text(
             text = text,
-            color = onSearchContainer,
+            color = color,
             style = MaterialTheme.typography.labelLarge
         )
     }

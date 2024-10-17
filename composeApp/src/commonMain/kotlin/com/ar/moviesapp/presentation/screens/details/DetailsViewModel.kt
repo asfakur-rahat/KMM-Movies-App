@@ -25,6 +25,13 @@ class DetailsViewModel(
                 )
                 setState(BaseUiState.Data(_uiState))
             }
+
+            is DetailsScreenEvent.AddToWatchList -> {
+                _uiState = _uiState.copy(
+                    isBookMarked = !_uiState.isBookMarked
+                )
+                setState(BaseUiState.Data(_uiState))
+            }
         }
     }
 

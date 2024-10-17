@@ -4,18 +4,46 @@ import com.ar.moviesapp.core.networkUtils.NetworkError
 import com.ar.moviesapp.core.networkUtils.Result
 import com.ar.moviesapp.core.networkUtils.onError
 import com.ar.moviesapp.core.networkUtils.onSuccess
-import com.ar.moviesapp.core.utils.cast
 import com.ar.moviesapp.data.remote.api.MovieApi
 import com.ar.moviesapp.data.remote.model.request.MovieRequest
 import com.ar.moviesapp.data.remote.model.response.MovieCast
 import com.ar.moviesapp.data.remote.model.response.MovieDetailsResponse
 import com.ar.moviesapp.data.remote.model.response.MovieReview
+import com.ar.moviesapp.data.remote.model.response.SearchedMovie
 import com.ar.moviesapp.domain.model.Movie
+import com.ar.moviesapp.domain.model.TrendingMovie
 import com.ar.moviesapp.domain.repository.MovieRepository
 
 class MovieRepositoryImpl(
     private val api: MovieApi
 ): MovieRepository {
+    override suspend fun getMovieFromSearch(query: String): Result<List<SearchedMovie>, NetworkError> {
+        println("repoimpl")
+        api.getMovieFromSearch(query)
+            .onSuccess {
+                val result = it.results.filter { movie ->
+                    movie.posterPath != null && movie.backdropPath != null
+                }
+                println("repoimpl success ->" + result)
+                return Result.Success(result)
+            }
+            .onError {
+                Result.Error(it)
+            }
+        return Result.Error(NetworkError.UNKNOWN)
+    }
+
+    override suspend fun getTrendingMovies(): Result<List<TrendingMovie>, NetworkError> {
+        api.getTrendingMovies()
+            .onSuccess {
+                return Result.Success(it.results)
+            }
+            .onError {
+                return Result.Error(it)
+            }
+        return Result.Error(NetworkError.UNKNOWN)
+    }
+
     override suspend fun getNowPlayingMovies(request: MovieRequest): Result<List<Movie>, NetworkError> {
         api.getNowPlayingMovies(request)
             .onSuccess {
@@ -88,7 +116,7 @@ class MovieRepositoryImpl(
         api.getMovieReview(movieId)
             .onSuccess {
                 val result = it.results.filter { review ->
-                    review.authorDetails.avatarPath != null && review.authorDetails.rating != null
+                    review.authorDetails.rating != null
                 }
                 return Result.Success(result)
             }

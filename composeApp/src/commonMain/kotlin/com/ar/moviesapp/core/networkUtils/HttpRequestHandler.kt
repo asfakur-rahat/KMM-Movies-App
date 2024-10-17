@@ -38,6 +38,7 @@ suspend inline fun <reified T> handleResult(
     onError: (NetworkError) -> Unit,
 ) {
 //    println("I Am handle result")
+    println("Response Status: ${result}")
     try {
         when (result.status.value) {
             in 200..299 -> {
@@ -49,6 +50,9 @@ suspend inline fun <reified T> handleResult(
                 } catch (e: SerializationException) {
 //                    println("Serialization error: ${e.message}")
                     onError(NetworkError.SERIALIZATION)
+                } catch (e: Exception){
+                    println("Unknown error: ${e.message}")
+                    onError(NetworkError.UNKNOWN)
                 }
             }
 
