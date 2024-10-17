@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ar.moviesapp.core.components.Colors
@@ -34,6 +33,7 @@ import movies.composeapp.generated.resources.Res
 import movies.composeapp.generated.resources.ic_home
 import movies.composeapp.generated.resources.ic_search
 import movies.composeapp.generated.resources.ic_watchlist
+import network.chaintech.sdpcomposemultiplatform.sdp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -102,7 +102,7 @@ fun BottomNavigation(
     onItemClick: (NavigationItem) -> Unit,
 ) {
     Column{
-        Box(modifier = Modifier.height(1.dp).fillMaxWidth().background(stroke))
+        Box(modifier = Modifier.height(1.sdp).fillMaxWidth().background(stroke))
         NavigationBar(
             modifier = Modifier.fillMaxWidth(),
             containerColor = Colors.backGround

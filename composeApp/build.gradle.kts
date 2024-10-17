@@ -65,6 +65,8 @@ kotlin {
 
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
+
+            implementation(libs.sdp.ssp.compose.multiplatform)
         }
     }
 }

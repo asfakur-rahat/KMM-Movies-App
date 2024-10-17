@@ -43,7 +43,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ar.moviesapp.core.base.BaseUiState
 import com.ar.moviesapp.core.components.Colors.backGround
@@ -74,6 +73,8 @@ import movies.composeapp.generated.resources.ic_genre
 import movies.composeapp.generated.resources.ic_profile
 import movies.composeapp.generated.resources.ic_rating
 import movies.composeapp.generated.resources.ic_runtime
+import network.chaintech.sdpcomposemultiplatform.sdp
+import network.chaintech.sdpcomposemultiplatform.ssp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -134,9 +135,9 @@ fun DetailsScreenContent(
         verticalArrangement = Arrangement.Top
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().height(100.dp)
-                .padding(top = paddingValues.calculateTopPadding() + 10.dp)
-                .padding(horizontal = 15.dp),
+            modifier = Modifier.fillMaxWidth().height(77.sdp)
+                .padding(top = paddingValues.calculateTopPadding() + 7.sdp)
+                .padding(horizontal = 12.sdp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -153,7 +154,7 @@ fun DetailsScreenContent(
                 text = "Details",
                 color = onBackGround,
                 style = MaterialTheme.typography.labelLarge.copy(
-                    fontSize = 18.sp,
+                    fontSize = 14.ssp,
                     textAlign = TextAlign.Center
                 )
             )
@@ -168,55 +169,62 @@ fun DetailsScreenContent(
         }
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(13.sdp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(bottom = 30.dp)
+            contentPadding = PaddingValues(bottom = 24.sdp)
         ) {
             item {
                 Box(
-                    modifier = Modifier.fillMaxWidth().height(350.dp)
+                    modifier = Modifier.fillMaxWidth().height(270.sdp)
                 ) {
                     CoilImage(
-                        modifier = Modifier.fillMaxWidth().height(250.dp).align(Alignment.TopCenter)
-                            .clip(RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)),
+                        modifier = Modifier.fillMaxWidth().height(193.sdp).align(Alignment.TopCenter)
+                            .clip(RoundedCornerShape(bottomEnd = 20.sdp, bottomStart = 20.sdp)),
                         imageModel = {
                             uiState.movieDetails.backdropPath?.toOriginalImage()
                         },
                         failure = {
-                            Box(modifier = Modifier.fillMaxSize().background(onBackGround))
+                            Box(modifier = Modifier.fillMaxSize().background(onBackGround)){
+                                Text(
+                                    modifier = Modifier.align(Alignment.Center),
+                                    text = uiState.movieDetails.title, color = Color(0xff000000)
+                                )
+                            }
                         }
                     )
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(start = 36.dp, end = 15.dp)
+                        modifier = Modifier.fillMaxWidth().padding(start = 28.sdp, end = 12.sdp)
                             .align(Alignment.BottomCenter),
                         verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.Start)
+                        horizontalArrangement = Arrangement.spacedBy(16.sdp, Alignment.Start)
                     ) {
                         CoilImage(
                             imageModel = {
                                 uiState.movieDetails.posterPath.toW500Image()
                             },
-                            modifier = Modifier.height(180.dp).width(130.dp)
-                                .clip(RoundedCornerShape(16.dp))
+                            modifier = Modifier.height(138.sdp).width(101.sdp)
+                                .clip(RoundedCornerShape(13.sdp))
                         )
                         Text(
                             modifier = Modifier.fillMaxWidth(),
                             text = uiState.movieDetails.title,
                             color = onBackGround,
                             style = MaterialTheme.typography.labelLarge.copy(
-                                fontSize = 26.sp,
+                                fontSize = 20.ssp,
                                 textAlign = TextAlign.Start
                             ),
-                            lineHeight = 32.sp
+                            lineHeight = 25.ssp,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                     Row(
                         modifier = Modifier.align(Alignment.BottomEnd)
-                            .padding(end = 24.dp, bottom = 115.dp)
-                            .background(backGround, shape = RoundedCornerShape(12.dp))
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                            .padding(end = 19.sdp, bottom = 89.sdp)
+                            .background(backGround, shape = RoundedCornerShape(11.sdp))
+                            .padding(horizontal = 6.sdp, vertical = 3.sdp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        horizontalArrangement = Arrangement.spacedBy(4.sdp)
                     ) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.ic_rating),
@@ -227,7 +235,7 @@ fun DetailsScreenContent(
                             text = uiState.movieDetails.voteAverage.toRating(),
                             color = rating,
                             style = MaterialTheme.typography.labelLarge.copy(
-                                fontSize = 18.sp,
+                                fontSize = 14.ssp,
                                 textAlign = TextAlign.Center
                             )
                         )
@@ -236,10 +244,10 @@ fun DetailsScreenContent(
             }
             item {
                 Row(
-                    modifier = Modifier.fillMaxWidth().height(48.dp).padding(horizontal = 50.dp),
+                    modifier = Modifier.fillMaxWidth().height(37.sdp).padding(horizontal = 40.sdp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(
-                        12.dp,
+                        10.sdp,
                         Alignment.CenterHorizontally
                     )
                 ) {
@@ -269,7 +277,7 @@ fun DetailsScreenContent(
                             color = searchContainer
                         )
                     },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 36.dp)
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.sdp)
                 ) {
                     MovieTabs.entries.forEachIndexed { index, currentTab ->
                         Tab(
@@ -288,25 +296,25 @@ fun DetailsScreenContent(
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp)
+                        .padding(top = 16.sdp)
                 ) {
                     when (MovieTabs.entries[selectedTabIndex.value].text) {
                         "Cast" -> MovieCastList(Modifier, uiState.movieCast.take(10))
                         "Reviews" -> MovieReviewList(Modifier, uiState.movieReview)
                         else -> {
                             Box(
-                                modifier = Modifier.fillMaxWidth().height(300.dp),
+                                modifier = Modifier.fillMaxWidth().height(231.sdp),
                                 contentAlignment = Alignment.TopStart
                             ) {
                                 Text(
-                                    modifier = Modifier.padding(15.dp),
+                                    modifier = Modifier.padding(12.sdp),
                                     text = uiState.movieDetails.overview,
                                     color = onBackGround,
                                     style = MaterialTheme.typography.labelLarge.copy(
-                                        fontSize = 20.sp,
+                                        fontSize = 16.ssp,
                                         textAlign = TextAlign.Start
                                     ),
-                                    lineHeight = 22.sp
+                                    lineHeight = 18.ssp
                                 )
                             }
                         }
@@ -325,21 +333,21 @@ fun MovieReviewList(
     reviews: List<MovieReview> = emptyList(),
 ) {
     FlowRow(
-        modifier = modifier.fillMaxSize().padding(horizontal = 15.dp).padding(bottom = 30.dp),
+        modifier = modifier.fillMaxSize().padding(horizontal = 12.sdp).padding(bottom = 24.sdp),
         horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(19.sdp, Alignment.CenterVertically),
         maxItemsInEachRow = 1
     ) {
         if (reviews.isEmpty()) {
             Box(
-                modifier = Modifier.height(300.dp).fillMaxWidth(),
+                modifier = Modifier.height(231.sdp).fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "No Reviews",
                     color = onBackGround,
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = 24.sp,
+                        fontSize = 19.ssp,
                         textAlign = TextAlign.Center
                     )
                 )
@@ -375,23 +383,23 @@ fun MovieReviewCard(
             Spacer(Modifier.height(8.dp))
             Text(text = review.authorDetails.rating?.toString() ?: "0", color = stroke)
         }
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(13.sdp))
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 text = review.author,
                 color = onBackGround,
                 style = MaterialTheme.typography.labelMedium.copy(
-                    fontSize = 20.sp,
+                    fontSize = 16.ssp,
                     textAlign = TextAlign.Start
                 )
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(6.sdp))
             Text(
                 text = review.content,
                 color = onBackGround,
                 maxLines = 5,
                 overflow = TextOverflow.Ellipsis,
-                fontSize = 16.sp
+                fontSize = 13.ssp
             )
         }
     }
@@ -406,7 +414,7 @@ fun MovieCastList(
     FlowRow(
         modifier = modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(19.sdp, Alignment.CenterVertically),
         maxItemsInEachRow = 2
     ) {
         casts.forEachIndexed { _, cast ->
@@ -419,9 +427,13 @@ fun MovieCastList(
 fun CastCard(
     cast: MovieCast,
 ) {
-    Box(modifier = Modifier.size(width = 140.dp, height = 170.dp)) {
+    Column(
+        modifier = Modifier.size(width = 107.sdp, height = 147.sdp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
         CoilImage(
-            modifier = Modifier.size(120.dp).align(Alignment.TopCenter).clip(CircleShape),
+            modifier = Modifier.size(93.sdp).clip(CircleShape),
             imageModel = {
                 cast.profilePath?.toOriginalImage()
             },
@@ -433,15 +445,16 @@ fun CastCard(
                 )
             }
         )
+        Spacer(Modifier.height(4.sdp))
         Text(
-            modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             text = cast.name,
             color = onBackGround,
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = 20.sp,
+                fontSize = 16.ssp,
                 textAlign = TextAlign.Center
             ),
-            maxLines = 2,
+            maxLines = 3,
             overflow = TextOverflow.Ellipsis
         )
     }
@@ -466,7 +479,7 @@ fun InfoChip(
             contentDescription = null,
             tint = color
         )
-        Spacer(Modifier.width(3.dp))
+        Spacer(Modifier.width(2.sdp))
         Text(
             text = text,
             color = color,

@@ -25,9 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.ar.moviesapp.core.components.Colors
 import com.ar.moviesapp.core.components.Colors.onBackGround
 import com.ar.moviesapp.core.components.Colors.rating
 import com.ar.moviesapp.core.utils.toOriginalImage
@@ -38,7 +35,6 @@ import com.ar.moviesapp.domain.model.TrendingMovie
 import com.ar.moviesapp.presentation.screens.details.InfoChip
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
-import io.ktor.sse.END_OF_LINE
 import movies.composeapp.generated.resources.Res
 import movies.composeapp.generated.resources.ic_1
 import movies.composeapp.generated.resources.ic_2
@@ -47,7 +43,8 @@ import movies.composeapp.generated.resources.ic_4
 import movies.composeapp.generated.resources.ic_5
 import movies.composeapp.generated.resources.ic_calender
 import movies.composeapp.generated.resources.ic_rating
-import movies.composeapp.generated.resources.ic_runtime
+import network.chaintech.sdpcomposemultiplatform.sdp
+import network.chaintech.sdpcomposemultiplatform.ssp
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -64,20 +61,22 @@ fun TopMovieCard(
         painterResource(Res.drawable.ic_4),
         painterResource(Res.drawable.ic_5)
     )
-    Box(modifier = modifier.height(230.dp).width(160.dp).clickable { onClick.invoke(data) }) {
+    Box(modifier = modifier.height(177.sdp).width(123.sdp).clickable { onClick.invoke(data) }) {
         CoilImage(
             modifier = Modifier
-                .padding(start = 15.dp)
-                .height(210.dp)
-                .width(145.dp)
+                .padding(start = 12.sdp)
+                .height(162.sdp)
+                .width(112.sdp)
                 .align(Alignment.TopEnd)
-                .clip(RoundedCornerShape(16.dp)),
+                .clip(RoundedCornerShape(12.sdp)),
             imageModel = { data.posterPath.toOriginalImage() },
             imageOptions = ImageOptions(
                 contentScale = ContentScale.FillBounds
             ),
             loading = {
-                CircularProgressIndicator(Modifier.size(48.dp).align(Alignment.Center))
+                Box(modifier = Modifier.matchParentSize()){
+                    CircularProgressIndicator(Modifier.size(34.sdp).align(Alignment.Center))
+                }
             },
             failure = {
                 Text(text = "Can't fetch image now")
@@ -87,9 +86,9 @@ fun TopMovieCard(
             painter = painterList[index],
             contentDescription = null,
             modifier = Modifier
-                .padding(bottom = 5.dp)
+                .padding(bottom = 4.sdp)
                 .align(Alignment.BottomStart)
-                .size(width = 70.dp, height = 90.dp),
+                .size(width = 54.sdp, height = 70.sdp),
             contentScale = ContentScale.FillHeight
         )
     }
@@ -102,18 +101,20 @@ fun MovieCard(
     index: Int = 0,
     onClick: (Movie) -> Unit = {},
 ) {
-    Box(modifier = modifier.height(145.dp).width(100.dp).clickable { onClick.invoke(data) }) {
+    Box(modifier = modifier.height(112.sdp).width(77.sdp).clickable { onClick.invoke(data) }) {
         CoilImage(
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.TopCenter)
-                .clip(RoundedCornerShape(16.dp)),
+                .clip(RoundedCornerShape(14.sdp)),
             imageModel = { data.posterPath.toOriginalImage() },
             imageOptions = ImageOptions(
                 contentScale = ContentScale.FillBounds
             ),
             loading = {
-                CircularProgressIndicator(Modifier.size(48.dp).align(Alignment.Center))
+                Box(modifier = Modifier.matchParentSize()){
+                    CircularProgressIndicator(Modifier.size(37.sdp).align(Alignment.Center))
+                }
             },
             failure = {
                 Text(text = "Can't fetch image now")
@@ -131,8 +132,8 @@ fun SearchResultCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(220.dp)
-            .padding(horizontal = 20.dp)
+            .height(170.sdp)
+            .padding(horizontal = 16.sdp)
             .clickable {
                 onClick.invoke(movie)
             },
@@ -142,21 +143,23 @@ fun SearchResultCard(
         CoilImage(
             modifier = Modifier
                 .fillMaxHeight()
-                .width(145.dp)
-                .clip(RoundedCornerShape(16.dp)),
+                .width(112.sdp)
+                .clip(RoundedCornerShape(14.sdp)),
             imageModel = {
                 movie.posterPath?.toOriginalImage()
             },
             loading = {
-                CircularProgressIndicator(Modifier.size(48.dp).align(Alignment.Center))
+                Box(modifier = Modifier.matchParentSize()){
+                    CircularProgressIndicator(Modifier.size(37.sdp).align(Alignment.Center))
+                }
             },
             failure = {
                 Text(text = "Can't fetch image now")
             }
         )
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(14.sdp))
         Column(
-            modifier = Modifier.weight(1f).fillMaxHeight().padding(vertical = 12.dp),
+            modifier = Modifier.weight(1f).fillMaxHeight().padding(vertical = 10.sdp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.SpaceBetween
         ){
@@ -165,7 +168,7 @@ fun SearchResultCard(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.labelLarge.copy(
-                    fontSize = 20.sp,
+                    fontSize = 16.ssp,
                     fontWeight = FontWeight.Bold,
                     color = onBackGround
                 )
@@ -176,7 +179,7 @@ fun SearchResultCard(
                     text = movie.voteAverage.toRating(),
                     color = rating
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(6.sdp))
                 InfoChip(
                     icon = Res.drawable.ic_calender,
                     text = movie.releaseDate,

@@ -18,13 +18,11 @@ class MovieRepositoryImpl(
     private val api: MovieApi
 ): MovieRepository {
     override suspend fun getMovieFromSearch(query: String): Result<List<SearchedMovie>, NetworkError> {
-        println("repoimpl")
         api.getMovieFromSearch(query)
             .onSuccess {
                 val result = it.results.filter { movie ->
                     movie.posterPath != null && movie.backdropPath != null
                 }
-                println("repoimpl success ->" + result)
                 return Result.Success(result)
             }
             .onError {
