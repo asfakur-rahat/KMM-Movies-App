@@ -11,6 +11,7 @@ import com.ar.moviesapp.presentation.screens.details.DetailsScreen
 import com.ar.moviesapp.presentation.screens.home.HomeScreen
 import com.ar.moviesapp.presentation.screens.search.SearchScreen
 import com.ar.moviesapp.presentation.screens.splash.SplashScreen
+import com.ar.moviesapp.presentation.screens.watchlist.WatchListScreen
 
 @Composable
 fun AppNavigation(
@@ -44,31 +45,24 @@ fun AppNavigation(
 fun NavGraphBuilder.mainGraph(navController: NavHostController, paddingValues: PaddingValues) {
     navigation(route = AppScreen.Main.route, startDestination = AppScreen.Home.route) {
         composable(route = AppScreen.Home.route) {
-            HomeScreen(paddingValues){
+            HomeScreen(paddingValues) {
                 navController.navigate("details/$it")
             }
         }
         composable(route = AppScreen.Search.route) {
             SearchScreen(
                 paddingValues = paddingValues,
-                goBack = {
-                    navController.navigate("main/home"){
-                        navController.graph.startDestinationRoute?.let { route->
-                            popUpTo(route){
-                                saveState = true
-                            }
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
                 goToDetails = {
                     navController.navigate("details/$it")
                 }
             )
         }
         composable(route = AppScreen.WatchList.route) {
-
+            WatchListScreen(paddingValues = paddingValues,
+                goToDetails = {
+                    navController.navigate("details/$it")
+                }
+            )
         }
     }
 }

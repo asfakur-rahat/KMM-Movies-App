@@ -10,6 +10,7 @@ import com.ar.moviesapp.domain.repository.MovieRepository
 import com.ar.moviesapp.presentation.screens.details.DetailsViewModel
 import com.ar.moviesapp.presentation.screens.home.HomeViewModel
 import com.ar.moviesapp.presentation.screens.search.SearchViewModel
+import com.ar.moviesapp.presentation.screens.watchlist.WatchlistViewModel
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +57,7 @@ val appModule = module{
     viewModelOf(::HomeViewModel)
     viewModelOf(::DetailsViewModel)
     viewModelOf(::SearchViewModel)
+    viewModelOf(::WatchlistViewModel)
 
 }
 

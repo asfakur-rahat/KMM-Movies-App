@@ -29,6 +29,7 @@ import com.ar.moviesapp.core.components.Colors.onBackGround
 import com.ar.moviesapp.core.components.Colors.rating
 import com.ar.moviesapp.core.utils.toOriginalImage
 import com.ar.moviesapp.core.utils.toRating
+import com.ar.moviesapp.data.local.dto.MovieEntity
 import com.ar.moviesapp.data.remote.model.response.SearchedMovie
 import com.ar.moviesapp.domain.model.Movie
 import com.ar.moviesapp.domain.model.TrendingMovie
@@ -42,7 +43,9 @@ import movies.composeapp.generated.resources.ic_3
 import movies.composeapp.generated.resources.ic_4
 import movies.composeapp.generated.resources.ic_5
 import movies.composeapp.generated.resources.ic_calender
+import movies.composeapp.generated.resources.ic_genre
 import movies.composeapp.generated.resources.ic_rating
+import movies.composeapp.generated.resources.ic_runtime
 import network.chaintech.sdpcomposemultiplatform.sdp
 import network.chaintech.sdpcomposemultiplatform.ssp
 import org.jetbrains.compose.resources.painterResource
@@ -171,7 +174,8 @@ fun SearchResultCard(
                     fontSize = 16.ssp,
                     fontWeight = FontWeight.Bold,
                     color = onBackGround
-                )
+                ),
+                lineHeight = 18.ssp
             )
             Column {
                 InfoChip(
@@ -189,3 +193,85 @@ fun SearchResultCard(
         }
     }
 }
+
+
+@Composable
+fun WatchListMovieCard(
+    modifier: Modifier = Modifier,
+    movie: MovieEntity,
+    onClick: (MovieEntity) -> Unit = {},
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(170.sdp)
+            .padding(horizontal = 16.sdp)
+            .clickable {
+                onClick.invoke(movie)
+            },
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        CoilImage(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(112.sdp)
+                .clip(RoundedCornerShape(14.sdp)),
+            imageModel = {
+                movie.posterPath.toOriginalImage()
+            },
+            loading = {
+                Box(modifier = Modifier.matchParentSize()){
+                    CircularProgressIndicator(Modifier.size(37.sdp).align(Alignment.Center))
+                }
+            },
+            failure = {
+                Text(text = "Can't fetch image now")
+            }
+        )
+        Spacer(Modifier.width(14.sdp))
+        Column(
+            modifier = Modifier.weight(1f).fillMaxHeight().padding(vertical = 10.sdp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.SpaceBetween
+        ){
+            Text(
+                text = movie.title,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontSize = 16.ssp,
+                    fontWeight = FontWeight.Bold,
+                    color = onBackGround
+                ),
+                lineHeight = 18.ssp
+            )
+            Column {
+                InfoChip(
+                    icon = Res.drawable.ic_rating,
+                    text = movie.voteAverage.toRating(),
+                    color = rating
+                )
+                Spacer(Modifier.height(6.sdp))
+                InfoChip(
+                    icon = Res.drawable.ic_genre,
+                    text = movie.genre,
+                    color = onBackGround
+                )
+                Spacer(Modifier.height(6.sdp))
+                InfoChip(
+                    icon = Res.drawable.ic_runtime,
+                    text = "${movie.runtime} Minutes",
+                    color = onBackGround
+                )
+                Spacer(Modifier.height(6.sdp))
+                InfoChip(
+                    icon = Res.drawable.ic_calender,
+                    text = movie.releaseDate.ifEmpty { "N/A" },
+                    color = onBackGround
+                )
+            }
+        }
+    }
+}
+
