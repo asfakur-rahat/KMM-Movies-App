@@ -4,6 +4,8 @@ import com.ar.moviesapp.core.networkUtils.NetworkError
 import com.ar.moviesapp.core.networkUtils.Result
 import com.ar.moviesapp.core.networkUtils.onError
 import com.ar.moviesapp.core.networkUtils.onSuccess
+import com.ar.moviesapp.data.local.db.AppDataBase
+import com.ar.moviesapp.data.local.dto.MovieEntity
 import com.ar.moviesapp.data.remote.api.MovieApi
 import com.ar.moviesapp.data.remote.model.request.MovieRequest
 import com.ar.moviesapp.data.remote.model.response.MovieCast
@@ -15,7 +17,8 @@ import com.ar.moviesapp.domain.model.TrendingMovie
 import com.ar.moviesapp.domain.repository.MovieRepository
 
 class MovieRepositoryImpl(
-    private val api: MovieApi
+    private val api: MovieApi,
+    private val db: AppDataBase
 ): MovieRepository {
     override suspend fun getMovieFromSearch(query: String): Result<List<SearchedMovie>, NetworkError> {
         api.getMovieFromSearch(query)
@@ -122,5 +125,21 @@ class MovieRepositoryImpl(
                 return Result.Error(it)
             }
         return Result.Error(NetworkError.UNKNOWN)
+    }
+
+    override suspend fun insertMovies(movies: List<MovieEntity>) {
+        db.movieDao().insertMovies(movies)
+    }
+
+    override suspend fun getMovieById(id: Int): MovieEntity? {
+        return db.movieDao().getMovieById(id)
+    }
+
+    override suspend fun getMovies(): List<MovieEntity> {
+        return db.movieDao().getMovies()
+    }
+
+    override suspend fun clearMovies(id: Int) {
+        db.movieDao().clearMovies(id)
     }
 }

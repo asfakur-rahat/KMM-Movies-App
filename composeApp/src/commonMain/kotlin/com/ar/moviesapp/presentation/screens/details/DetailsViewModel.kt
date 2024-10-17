@@ -4,6 +4,8 @@ import com.ar.moviesapp.core.base.BaseUiState
 import com.ar.moviesapp.core.base.MVIViewModel
 import com.ar.moviesapp.core.networkUtils.onError
 import com.ar.moviesapp.core.networkUtils.onSuccess
+import com.ar.moviesapp.core.utils.toGenre
+import com.ar.moviesapp.data.local.dto.MovieEntity
 import com.ar.moviesapp.domain.repository.MovieRepository
 
 class DetailsViewModel(
@@ -25,17 +27,19 @@ class DetailsViewModel(
                 )
                 setState(BaseUiState.Data(_uiState))
             }
-
-            is DetailsScreenEvent.AddToWatchList -> {
-                _uiState = _uiState.copy(
-                    isBookMarked = !_uiState.isBookMarked
-                )
-                setState(BaseUiState.Data(_uiState))
-            }
+            is DetailsScreenEvent.AddToWatchList -> addToWatchList(eventType.movieId)
+            DetailsScreenEvent.RemoveFromWatchList -> removeFromWatchList(_uiState.movieId)
         }
     }
 
     private fun fetchMovieDetails(movieId: Int) = safeLaunch {
+        val movie = repository.getMovieById(movieId)
+        movie?.let {
+            _uiState = _uiState.copy(
+                isBookMarked = true
+            )
+            setState(BaseUiState.Data(_uiState))
+        }
         repository.getMovieDetails(movieId)
             .onSuccess {
                 _uiState = _uiState.copy(
@@ -68,5 +72,32 @@ class DetailsViewModel(
             .onError {
                 setState(BaseUiState.Error(Throwable(message = it.name)))
             }
+    }
+    private fun addToWatchList(movieId: Int) = safeLaunch {
+        repository.insertMovies(
+            listOf(
+                MovieEntity(
+                    id = movieId,
+                    title = _uiState.movieDetails.title,
+                    posterPath = _uiState.movieDetails.posterPath,
+                    overview = _uiState.movieDetails.overview,
+                    releaseDate = _uiState.movieDetails.releaseDate,
+                    voteAverage = _uiState.movieDetails.voteAverage,
+                    genre = _uiState.movieDetails.genres.toGenre(),
+                    runtime = _uiState.movieDetails.runtime
+                )
+            )
+        )
+        _uiState = _uiState.copy(
+            isBookMarked = true
+        )
+        setState(BaseUiState.Data(_uiState))
+    }
+    private fun removeFromWatchList(movieId: Int) = safeLaunch {
+        repository.clearMovies(movieId)
+        _uiState = _uiState.copy(
+            isBookMarked = false
+        )
+        setState(BaseUiState.Data(_uiState))
     }
 }

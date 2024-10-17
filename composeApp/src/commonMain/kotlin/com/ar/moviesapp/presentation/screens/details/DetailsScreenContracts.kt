@@ -16,4 +16,5 @@ sealed interface DetailsScreenEvent{
     data class SetMovieId(val movieId: Int): DetailsScreenEvent
     data class FetchMovieDetails(val movieId: Int): DetailsScreenEvent
     data class AddToWatchList(val movieId: Int): DetailsScreenEvent
+    data object RemoveFromWatchList: DetailsScreenEvent
 }

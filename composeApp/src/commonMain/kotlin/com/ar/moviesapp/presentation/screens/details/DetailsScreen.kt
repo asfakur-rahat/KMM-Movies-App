@@ -91,6 +91,7 @@ fun DetailsScreen(
     val viewModel = koinViewModel<DetailsViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
+        viewModel.onTriggerEvent(DetailsScreenEvent.SetMovieId(movieId))
         viewModel.onTriggerEvent(DetailsScreenEvent.FetchMovieDetails(movieId))
     }
 
@@ -164,7 +165,8 @@ fun DetailsScreenContent(
             )
             Icon(
                 modifier = Modifier.clickable {
-                    onEvent.invoke(DetailsScreenEvent.AddToWatchList(uiState.movieId))
+                    if(uiState.isBookMarked) onEvent.invoke(DetailsScreenEvent.RemoveFromWatchList)
+                    else onEvent.invoke(DetailsScreenEvent.AddToWatchList(uiState.movieId))
                 },
                 imageVector = vectorResource(Res.drawable.ic_bookmark),
                 contentDescription = "BookMark",

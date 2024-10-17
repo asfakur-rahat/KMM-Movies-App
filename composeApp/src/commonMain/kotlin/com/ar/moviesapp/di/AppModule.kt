@@ -2,7 +2,6 @@ package com.ar.moviesapp.di
 
 import androidx.room.RoomDatabase
 import com.ar.moviesapp.core.networkUtils.createHttpClient
-import com.ar.moviesapp.core.utils.ScreenSize
 import com.ar.moviesapp.data.local.db.AppDataBase
 import com.ar.moviesapp.data.remote.api.MovieApi
 import com.ar.moviesapp.data.remote.apiImpl.MovieApiImpl

@@ -2,6 +2,7 @@ package com.ar.moviesapp.domain.repository
 
 import com.ar.moviesapp.core.networkUtils.NetworkError
 import com.ar.moviesapp.core.networkUtils.Result
+import com.ar.moviesapp.data.local.dto.MovieEntity
 import com.ar.moviesapp.data.remote.model.request.MovieRequest
 import com.ar.moviesapp.data.remote.model.response.MovieCast
 import com.ar.moviesapp.data.remote.model.response.MovieDetailsResponse
@@ -23,4 +24,10 @@ interface MovieRepository {
     suspend fun getMovieDetails(movieId: Int): Result<MovieDetailsResponse, NetworkError>
     suspend fun getMovieCast(movieId: Int): Result<List<MovieCast>, NetworkError>
     suspend fun getMovieReview(movieId: Int): Result<List<MovieReview>, NetworkError>
+
+    //Database Specific tasks
+    suspend fun insertMovies(movies: List<MovieEntity>)
+    suspend fun getMovieById(id: Int): MovieEntity?
+    suspend fun getMovies(): List<MovieEntity>
+    suspend fun clearMovies(id: Int)
 }

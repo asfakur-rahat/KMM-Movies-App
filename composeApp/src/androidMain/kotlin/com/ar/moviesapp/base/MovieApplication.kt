@@ -10,12 +10,6 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 class MovieApplication: Application() {
-    private val androidModule = module {
-        single{
-            RoomBuilder(get()).builder()
-        }
-        singleOf(::ScreenSize)
-    }
     override fun onCreate() {
         super.onCreate()
         initKoin {
@@ -23,4 +17,11 @@ class MovieApplication: Application() {
             modules(appModule, androidModule)
         }
     }
+}
+
+val androidModule = module {
+    single {
+        RoomBuilder(get()).builder()
+    }
+    singleOf(::ScreenSize)
 }
