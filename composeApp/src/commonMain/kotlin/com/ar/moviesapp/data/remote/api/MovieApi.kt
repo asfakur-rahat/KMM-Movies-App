@@ -12,12 +12,16 @@ import com.ar.moviesapp.data.remote.model.response.PopularMovieResponse
 import com.ar.moviesapp.data.remote.model.response.TopRatedMovieResponse
 import com.ar.moviesapp.data.remote.model.response.TrendingMovieResponse
 import com.ar.moviesapp.data.remote.model.response.UpcomingMovieResponse
+import com.ar.moviesapp.domain.model.Movie
+import com.ar.moviesapp.domain.model.PaginationItems
 
 interface MovieApi {
 
     suspend fun getMovieFromSearch(query: String): Result<MovieSearchResponse, NetworkError>
 
     suspend fun getTrendingMovies(): Result<TrendingMovieResponse, NetworkError>
+
+    suspend fun getMoreMovies(page: Int, limit: Int): PaginationItems<Movie>
 
     suspend fun getNowPlayingMovies(request: MovieRequest): Result<NowPlayingMovieResponse, NetworkError>
     suspend fun getUpcomingMovies(request: MovieRequest): Result<UpcomingMovieResponse, NetworkError>

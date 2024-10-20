@@ -41,21 +41,24 @@ class HomeViewModel(
     }
 
     private fun fetchMovies() = safeLaunch {
-        repository.getTrendingMovies()
-            .onSuccess {
-                _uiState = _uiState.copy(
-                    topFiveMovie = if (it.size > 5) it.take(5) else it
-                )
-                setState(BaseUiState.Data(_uiState))
-            }
-            .onError {
-                setState(BaseUiState.Error(Throwable(message = it.name)))
-            }
-
-
+        // Not reliable endpoint so we are not using it
+//        repository.getTrendingMovies()
+//            .onSuccess {
+//                _uiState = _uiState.copy(
+//                    topFiveMovie = if (it.size > 5) it.take(5) else it
+//                )
+//                setState(BaseUiState.Data(_uiState))
+//            }
+//            .onError {
+//                setState(BaseUiState.Error(Throwable(message = it.name)))
+//            }
         repository.getTopRatedMovies(MovieRequest(language = "en-US", page = 1))
             .onSuccess {
+                val topVote = it.sortedBy { mm ->
+                    mm.voteAverage > mm.voteAverage
+                }
                 _uiState = _uiState.copy(
+                    topFiveMovie = topVote.take(5),
                     topRatedMovie = it
                 )
                 setState(BaseUiState.Data(_uiState))
@@ -83,7 +86,6 @@ class HomeViewModel(
             .onError {
                 setState(BaseUiState.Error(Throwable(message = it.name)))
             }
-
         repository.getPopularMovies(MovieRequest(language = "en-US", page = 1))
             .onSuccess {
                 _uiState = _uiState.copy(

@@ -86,6 +86,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun DetailsScreen(
     paddingValues: PaddingValues,
     goBack: () -> Unit = {},
+    toMoreMovies: (Int) -> Unit = {},
     movieId: Int = 0,
 ) {
     val viewModel = koinViewModel<DetailsViewModel>()
@@ -106,6 +107,9 @@ fun DetailsScreen(
                 },
                 goBack = {
                     goBack.invoke()
+                },
+                toMoreMovies = {
+                    toMoreMovies.invoke(it)
                 }
             )
         }
@@ -127,6 +131,7 @@ fun DetailsScreenContent(
     uiState: DetailsScreenUiState,
     onEvent: (DetailsScreenEvent) -> Unit,
     goBack: () -> Unit = {},
+    toMoreMovies: (Int) -> Unit = {},
 ) {
 
     val scope = rememberCoroutineScope()
@@ -165,7 +170,7 @@ fun DetailsScreenContent(
             )
             Icon(
                 modifier = Modifier.clickable {
-                    if(uiState.isBookMarked) onEvent.invoke(DetailsScreenEvent.RemoveFromWatchList)
+                    if (uiState.isBookMarked) onEvent.invoke(DetailsScreenEvent.RemoveFromWatchList)
                     else onEvent.invoke(DetailsScreenEvent.AddToWatchList(uiState.movieId))
                 },
                 imageVector = vectorResource(Res.drawable.ic_bookmark),
@@ -184,13 +189,14 @@ fun DetailsScreenContent(
                     modifier = Modifier.fillMaxWidth().height(270.sdp)
                 ) {
                     CoilImage(
-                        modifier = Modifier.fillMaxWidth().height(193.sdp).align(Alignment.TopCenter)
+                        modifier = Modifier.fillMaxWidth().height(193.sdp)
+                            .align(Alignment.TopCenter)
                             .clip(RoundedCornerShape(bottomEnd = 20.sdp, bottomStart = 20.sdp)),
                         imageModel = {
                             uiState.movieDetails.backdropPath?.toOriginalImage()
                         },
                         failure = {
-                            Box(modifier = Modifier.fillMaxSize().background(onBackGround)){
+                            Box(modifier = Modifier.fillMaxSize().background(onBackGround)) {
                                 Text(
                                     modifier = Modifier.align(Alignment.Center),
                                     text = uiState.movieDetails.title, color = Color(0xff000000)
@@ -206,7 +212,15 @@ fun DetailsScreenContent(
                     ) {
                         CoilImage(
                             imageModel = {
-                                uiState.movieDetails.posterPath.toW500Image()
+                                uiState.movieDetails.posterPath?.toW500Image()
+                            },
+                            failure = {
+                                Box(
+                                    modifier = Modifier.height(138.sdp).width(101.sdp)
+                                        .clip(RoundedCornerShape(13.sdp))
+                                ) {
+                                    Text("No Image", modifier = Modifier.align(Alignment.Center))
+                                }
                             },
                             modifier = Modifier.height(138.sdp).width(101.sdp)
                                 .clip(RoundedCornerShape(13.sdp))
@@ -305,11 +319,14 @@ fun DetailsScreenContent(
                         .padding(top = 16.sdp)
                 ) {
                     when (MovieTabs.entries[selectedTabIndex.value].text) {
-                        "Cast" -> MovieCastList(Modifier, uiState.movieCast.take(15))
+                        "Cast" -> MovieCastList(Modifier, uiState.movieCast.take(15)){
+                            toMoreMovies.invoke(it)
+                        }
                         "Reviews" -> MovieReviewList(Modifier, uiState.movieReview)
                         else -> {
                             Box(
-                                modifier = Modifier.fillMaxSize().heightIn(max = screen.getHeight().dp),
+                                modifier = Modifier.fillMaxSize()
+                                    .heightIn(max = screen.getHeight().dp),
                                 contentAlignment = Alignment.TopStart
                             ) {
                                 Text(
@@ -417,6 +434,7 @@ fun MovieReviewCard(
 fun MovieCastList(
     modifier: Modifier,
     casts: List<MovieCast> = emptyList(),
+    onClick: (Int) -> Unit = {}
 ) {
     FlowRow(
         modifier = modifier.fillMaxSize(),
@@ -425,7 +443,9 @@ fun MovieCastList(
         maxItemsInEachRow = 2
     ) {
         casts.forEachIndexed { _, cast ->
-            CastCard(cast)
+            CastCard(cast){
+                onClick.invoke(it)
+            }
         }
     }
 }
@@ -433,9 +453,12 @@ fun MovieCastList(
 @Composable
 fun CastCard(
     cast: MovieCast,
+    onClick: (Int) -> Unit = {},
 ) {
     Column(
-        modifier = Modifier.size(width = 107.sdp, height = 147.sdp),
+        modifier = Modifier.size(width = 107.sdp, height = 147.sdp).clickable {
+            onClick.invoke(cast.id)
+        },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -478,7 +501,7 @@ enum class MovieTabs(val text: String) {
 fun InfoChip(
     icon: DrawableResource,
     text: String,
-    color: Color = onSearchContainer
+    color: Color = onSearchContainer,
 ) {
     Row {
         Icon(

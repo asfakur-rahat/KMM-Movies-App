@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.ar.moviesapp.presentation.screens.details.DetailsScreen
 import com.ar.moviesapp.presentation.screens.home.HomeScreen
+import com.ar.moviesapp.presentation.screens.more.MoreMovieScreen
 import com.ar.moviesapp.presentation.screens.search.SearchScreen
 import com.ar.moviesapp.presentation.screens.splash.SplashScreen
 import com.ar.moviesapp.presentation.screens.watchlist.WatchListScreen
@@ -45,9 +46,10 @@ fun AppNavigation(
 fun NavGraphBuilder.mainGraph(navController: NavHostController, paddingValues: PaddingValues) {
     navigation(route = AppScreen.Main.route, startDestination = AppScreen.Home.route) {
         composable(route = AppScreen.Home.route) {
-            HomeScreen(paddingValues) {
-                navController.navigate("details/$it")
-            }
+//            HomeScreen(paddingValues) {
+//                navController.navigate("details/$it")
+//            }
+            MoreMovieScreen(paddingValues)
         }
         composable(route = AppScreen.Search.route) {
             SearchScreen(

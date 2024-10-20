@@ -25,7 +25,7 @@ data class Movie(
     var popularity: Double = 0.0,
 
     @SerialName("poster_path")
-    var posterPath: String = "",
+    var posterPath: String? = null,
 
     @SerialName("release_date")
     var releaseDate: String = "",
@@ -45,5 +45,5 @@ data class TrendingMovie(
     var id: Int = 0,
     var title: String = "",
     @SerialName("poster_path")
-    var posterPath: String = ""
+    var posterPath: String? = null
 )

@@ -12,7 +12,7 @@ data class MovieDetailsResponse(
     var id: Int = 0,
     var overview: String = "",
     var runtime: Int = 0,
-    @SerialName("poster_path") var posterPath: String = "",
+    @SerialName("poster_path") var posterPath: String? = null,
     var title: String = "",
     @SerialName("release_date") var releaseDate: String = "",
     @SerialName("vote_average") var voteAverage: Double = 0.0,

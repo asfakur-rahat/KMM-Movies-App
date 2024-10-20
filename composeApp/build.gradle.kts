@@ -67,6 +67,9 @@ kotlin {
             implementation(libs.sqlite.bundled)
 
             implementation(libs.sdp.ssp.compose.multiplatform)
+
+            implementation("app.cash.paging:paging-compose-common:3.3.0-alpha02-0.5.1")
+            implementation("app.cash.paging:paging-common:3.3.0-alpha02-0.5.1")
         }
     }
 }

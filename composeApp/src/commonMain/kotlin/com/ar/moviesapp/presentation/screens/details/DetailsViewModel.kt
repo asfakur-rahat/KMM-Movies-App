@@ -79,7 +79,7 @@ class DetailsViewModel(
                 MovieEntity(
                     id = movieId,
                     title = _uiState.movieDetails.title,
-                    posterPath = _uiState.movieDetails.posterPath,
+                    posterPath = _uiState.movieDetails.posterPath ?: "",
                     overview = _uiState.movieDetails.overview,
                     releaseDate = _uiState.movieDetails.releaseDate,
                     voteAverage = _uiState.movieDetails.voteAverage,

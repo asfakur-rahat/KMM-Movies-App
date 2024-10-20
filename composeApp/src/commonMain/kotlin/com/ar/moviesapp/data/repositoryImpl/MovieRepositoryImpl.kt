@@ -1,5 +1,8 @@
 package com.ar.moviesapp.data.repositoryImpl
 
+import androidx.paging.PagingConfig
+import app.cash.paging.Pager
+import app.cash.paging.PagingData
 import com.ar.moviesapp.core.networkUtils.NetworkError
 import com.ar.moviesapp.core.networkUtils.Result
 import com.ar.moviesapp.core.networkUtils.onError
@@ -12,14 +15,27 @@ import com.ar.moviesapp.data.remote.model.response.MovieCast
 import com.ar.moviesapp.data.remote.model.response.MovieDetailsResponse
 import com.ar.moviesapp.data.remote.model.response.MovieReview
 import com.ar.moviesapp.data.remote.model.response.SearchedMovie
+import com.ar.moviesapp.data.remote.pageSource.MoviePagingSource
 import com.ar.moviesapp.domain.model.Movie
 import com.ar.moviesapp.domain.model.TrendingMovie
 import com.ar.moviesapp.domain.repository.MovieRepository
+import kotlinx.coroutines.flow.Flow
 
 class MovieRepositoryImpl(
     private val api: MovieApi,
-    private val db: AppDataBase
+    private val db: AppDataBase,
+    private val pagingSource: MoviePagingSource
 ): MovieRepository {
+    override suspend fun getMoreMovie(): Flow<PagingData<Movie>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20
+            ),
+            pagingSourceFactory = {
+                pagingSource
+            }
+        ).flow
+    }
     override suspend fun getMovieFromSearch(query: String): Result<List<SearchedMovie>, NetworkError> {
         api.getMovieFromSearch(query)
             .onSuccess {

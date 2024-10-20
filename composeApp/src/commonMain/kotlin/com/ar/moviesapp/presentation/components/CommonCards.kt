@@ -53,9 +53,9 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun TopMovieCard(
     modifier: Modifier = Modifier,
-    data: TrendingMovie,
+    data: Movie,
     index: Int = 0,
-    onClick: (TrendingMovie) -> Unit = {},
+    onClick: (Movie) -> Unit = {},
 ) {
     val painterList = listOf(
         painterResource(Res.drawable.ic_1),
@@ -72,7 +72,7 @@ fun TopMovieCard(
                 .width(112.sdp)
                 .align(Alignment.TopEnd)
                 .clip(RoundedCornerShape(12.sdp)),
-            imageModel = { data.posterPath.toOriginalImage() },
+            imageModel = { data.posterPath?.toOriginalImage() },
             imageOptions = ImageOptions(
                 contentScale = ContentScale.FillBounds
             ),
@@ -109,7 +109,7 @@ fun MovieCard(
                 .fillMaxSize()
                 .align(Alignment.TopCenter)
                 .clip(RoundedCornerShape(14.sdp)),
-            imageModel = { data.posterPath.toOriginalImage() },
+            imageModel = { data.posterPath?.toOriginalImage() },
             imageOptions = ImageOptions(
                 contentScale = ContentScale.FillBounds
             ),

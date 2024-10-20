@@ -1,5 +1,6 @@
 package com.ar.moviesapp.domain.repository
 
+import app.cash.paging.PagingData
 import com.ar.moviesapp.core.networkUtils.NetworkError
 import com.ar.moviesapp.core.networkUtils.Result
 import com.ar.moviesapp.data.local.dto.MovieEntity
@@ -10,8 +11,11 @@ import com.ar.moviesapp.data.remote.model.response.MovieReview
 import com.ar.moviesapp.data.remote.model.response.SearchedMovie
 import com.ar.moviesapp.domain.model.Movie
 import com.ar.moviesapp.domain.model.TrendingMovie
+import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
+
+    suspend fun getMoreMovie(): Flow<PagingData<Movie>>
 
     suspend fun getMovieFromSearch(query: String): Result<List<SearchedMovie>, NetworkError>
     suspend fun getTrendingMovies(): Result<List<TrendingMovie>, NetworkError>

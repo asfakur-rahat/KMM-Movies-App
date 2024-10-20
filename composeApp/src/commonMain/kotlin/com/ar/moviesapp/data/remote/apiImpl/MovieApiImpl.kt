@@ -14,7 +14,10 @@ import com.ar.moviesapp.data.remote.model.response.PopularMovieResponse
 import com.ar.moviesapp.data.remote.model.response.TopRatedMovieResponse
 import com.ar.moviesapp.data.remote.model.response.TrendingMovieResponse
 import com.ar.moviesapp.data.remote.model.response.UpcomingMovieResponse
+import com.ar.moviesapp.domain.model.Movie
+import com.ar.moviesapp.domain.model.PaginationItems
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
@@ -24,6 +27,9 @@ class MovieApiImpl(
     companion object{
         private const val BASE_URL = "https://api.themoviedb.org/3"
         private const val API_KEY = "d769d990b72bac3230103f9f87450ea3"
+        fun <T> paginateData(result: List<T>, page: Int, total: Long): PaginationItems<T> {
+            return PaginationItems(total = total, page = page, items = result)
+        }
     }
 
     override suspend fun getMovieFromSearch(query: String): Result<MovieSearchResponse, NetworkError> {
@@ -62,6 +68,24 @@ class MovieApiImpl(
             }
         )
         return Result.Error(NetworkError.UNKNOWN)
+    }
+
+    override suspend fun getMoreMovies(page: Int, limit: Int): PaginationItems<Movie> {
+        val response = client.get("${BASE_URL}/movie/now_playing"){
+            parameter("page", page)
+            parameter("api_key", API_KEY)
+        }
+        try {
+            response.body<NowPlayingMovieResponse>()
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+        val result = response.body<NowPlayingMovieResponse>()
+        return paginateData(
+            result = result.results,
+            page = result.page,
+            total = result.totalResults.toLong()
+        )
     }
 
     override suspend fun getNowPlayingMovies(request: MovieRequest): Result<NowPlayingMovieResponse, NetworkError> {

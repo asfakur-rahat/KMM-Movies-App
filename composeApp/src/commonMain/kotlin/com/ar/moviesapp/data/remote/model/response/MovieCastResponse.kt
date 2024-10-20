@@ -11,6 +11,7 @@ data class MovieCastResponse(
 
 @Serializable
 data class MovieCast(
+    var id: Int = 0,
     var name: String = "",
     @SerialName("profile_path") var profilePath: String? = null
 )

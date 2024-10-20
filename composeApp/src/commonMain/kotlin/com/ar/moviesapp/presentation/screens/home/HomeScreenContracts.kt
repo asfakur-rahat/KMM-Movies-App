@@ -2,13 +2,13 @@ package com.ar.moviesapp.presentation.screens.home
 
 import com.ar.moviesapp.data.remote.model.response.SearchedMovie
 import com.ar.moviesapp.domain.model.Movie
-import com.ar.moviesapp.domain.model.TrendingMovie
+
 
 data class HomeScreenUiState(
     val searchMode: Boolean = false,
     val searchQuery: String = "",
     val searchResult: List<SearchedMovie> = emptyList(),
-    val topFiveMovie: List<TrendingMovie> = emptyList(),
+    val topFiveMovie: List<Movie> = emptyList(),
     val topRatedMovie: List<Movie> = emptyList(),
     val nowPlayingMovie: List<Movie> = emptyList(),
     val popularMovie: List<Movie> = emptyList(),

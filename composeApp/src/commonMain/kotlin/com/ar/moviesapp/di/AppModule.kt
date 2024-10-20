@@ -5,10 +5,12 @@ import com.ar.moviesapp.core.networkUtils.createHttpClient
 import com.ar.moviesapp.data.local.db.AppDataBase
 import com.ar.moviesapp.data.remote.api.MovieApi
 import com.ar.moviesapp.data.remote.apiImpl.MovieApiImpl
+import com.ar.moviesapp.data.remote.pageSource.MoviePagingSource
 import com.ar.moviesapp.data.repositoryImpl.MovieRepositoryImpl
 import com.ar.moviesapp.domain.repository.MovieRepository
 import com.ar.moviesapp.presentation.screens.details.DetailsViewModel
 import com.ar.moviesapp.presentation.screens.home.HomeViewModel
+import com.ar.moviesapp.presentation.screens.more.MoreMovieViewModel
 import com.ar.moviesapp.presentation.screens.search.SearchViewModel
 import com.ar.moviesapp.presentation.screens.watchlist.WatchlistViewModel
 import io.ktor.client.engine.HttpClientEngine
@@ -51,6 +53,10 @@ val appModule = module{
     //HttpClient
     single { createHttpClient(get()) }
 
+    single {
+        MoviePagingSource(get())
+    }
+
     singleOf(::MovieApiImpl).bind(MovieApi::class)
     singleOf(::MovieRepositoryImpl).bind(MovieRepository::class)
 
@@ -58,6 +64,7 @@ val appModule = module{
     viewModelOf(::DetailsViewModel)
     viewModelOf(::SearchViewModel)
     viewModelOf(::WatchlistViewModel)
+    viewModelOf(::MoreMovieViewModel)
 
 }
 
