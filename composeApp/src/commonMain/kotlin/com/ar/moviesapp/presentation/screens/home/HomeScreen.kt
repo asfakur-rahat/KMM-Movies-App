@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -76,7 +75,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
-    onNavigateToDetails: (String) -> Unit,
+    onNavigateToDetails: (Int) -> Unit,
 ) {
     val viewModel = koinViewModel<HomeViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -124,7 +123,7 @@ fun HomeScreenContent(
     paddingValues: PaddingValues,
     uiState: HomeScreenUiState,
     onEvent: (HomeScreenEvent) -> Unit,
-    onNavigation: (String) -> Unit,
+    onNavigation: (Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 4 })
@@ -156,90 +155,102 @@ fun HomeScreenContent(
                     )
                 )
                 SearchBar(
-                    query = uiState.searchQuery,
-                    onQueryChange = {
-                        onEvent(HomeScreenEvent.OnSearchQueryChange(it))
+                    inputField = {
+                        SearchBarDefaults.InputField(
+                            query = uiState.searchQuery,
+                            onSearch = {
+                                onEvent(HomeScreenEvent.OnSearch(it))
+                            },
+                            onQueryChange = {
+                                onEvent(HomeScreenEvent.OnSearchQueryChange(it))
+                            },
+                            onExpandedChange = {
+                                onEvent(HomeScreenEvent.OnSearchMode(it))
+                            },
+                            expanded = uiState.searchMode,
+                            colors = inputFieldColors(
+                                focusedTextColor = onBackGround,
+                                unfocusedTextColor = onBackGround,
+                                disabledTextColor = onBackGround,
+                                focusedPlaceholderColor = onSearchContainer,
+                                unfocusedPlaceholderColor = onSearchContainer,
+                                disabledPlaceholderColor = onSearchContainer,
+                                cursorColor = onSearchContainer,
+                            ),
+                            placeholder = { Text(text = "Search using title") },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.ic_search),
+                                    contentDescription = null,
+                                    tint = onSearchContainer
+                                )
+                            },
+                        )
                     },
-                    onSearch = {
-                        onEvent(HomeScreenEvent.OnSearch(it))
-                    },
-                    onActiveChange = {
+                    onExpandedChange = {
                         onEvent(HomeScreenEvent.OnSearchMode(it))
                     },
+                    expanded = uiState.searchMode,
                     modifier = Modifier.fillMaxWidth().heightIn(
                         max = screen.getHeight().dp
                     ),
-                    placeholder = { Text(text = "Search using title") },
-                    trailingIcon = {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.ic_search),
-                            contentDescription = null,
-                            tint = onSearchContainer
-                        )
-                    },
-                    active = uiState.searchMode,
                     colors = SearchBarDefaults.colors(
                         containerColor = searchContainer,
-                        dividerColor = stroke,
-                        inputFieldColors = inputFieldColors(
-                            focusedTextColor = onBackGround,
-                            unfocusedTextColor = onBackGround,
-                            disabledTextColor = onBackGround,
-                            focusedPlaceholderColor = onSearchContainer,
-                            unfocusedPlaceholderColor = onSearchContainer,
-                            disabledPlaceholderColor = onSearchContainer,
-                            cursorColor = onSearchContainer,
-                        )
+                        dividerColor = stroke
                     ),
-                    shape = RoundedCornerShape(25)
-                ) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = screen.getHeight().dp),
-                        horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.spacedBy(14.sdp, Alignment.Top),
-                        contentPadding = PaddingValues(start = 12.sdp, end = 12.sdp)
-                    ) {
-                        item {
-                            Box(modifier = Modifier.fillMaxWidth().height(40.sdp)) {
-                                Icon(
-                                    modifier = Modifier
-                                        .align(Alignment.CenterEnd)
-                                        .padding(end = 8.sdp)
-                                        .size(28.sdp)
-                                        .clickable {
-                                            onEvent(HomeScreenEvent.OnSearchMode(false))
-                                        },
-                                    imageVector = Icons.Default.Close, contentDescription = "close",
-                                    tint = onBackGround
-                                )
-                            }
-                        }
-                        itemsIndexed(uiState.searchResult) { _, movie ->
-                            SearchResultCard(
-                                modifier = Modifier,
-                                movie = movie
-                            ) {
-                                onNavigation.invoke(it.id.toString())
-                            }
-                        }
-                        if(uiState.searchResult.isEmpty()){
+                    content = {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = screen.getHeight().dp),
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.spacedBy(14.sdp, Alignment.Top),
+                            contentPadding = PaddingValues(start = 12.sdp, end = 12.sdp)
+                        ) {
                             item {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 77.sdp)
-                                        .heightIn(max = screen.getHeight().dp),
-                                    contentAlignment = Alignment.Center
-                                ){
-                                    Image(painter = painterResource(Res.drawable.search_empty), contentDescription = null)
+                                Box(modifier = Modifier.fillMaxWidth().height(40.sdp)) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .align(Alignment.CenterEnd)
+                                            .padding(end = 8.sdp)
+                                            .size(28.sdp)
+                                            .clickable {
+                                                onEvent(HomeScreenEvent.OnSearchMode(false))
+                                            },
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "close",
+                                        tint = onBackGround
+                                    )
                                 }
+                            }
+                            itemsIndexed(uiState.searchResult) { _, movie ->
+                                SearchResultCard(
+                                    modifier = Modifier,
+                                    movie = movie
+                                ) {
+                                    onNavigation.invoke(it.id)
+                                }
+                            }
+                            if (uiState.searchResult.isEmpty()) {
+                                item {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 77.sdp)
+                                            .heightIn(max = screen.getHeight().dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Image(
+                                            painter = painterResource(Res.drawable.search_empty),
+                                            contentDescription = null
+                                        )
+                                    }
 
+                                }
                             }
                         }
                     }
-                }
+                )
             }
             item {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(16.sdp, Alignment.Start)) {
@@ -248,7 +259,7 @@ fun HomeScreenContent(
                             data = item,
                             index = index,
                             onClick = {
-                                onNavigation.invoke(it.id.toString())
+                                onNavigation.invoke(it.id)
                             }
                         )
                     }
@@ -290,25 +301,25 @@ fun HomeScreenContent(
                     when (Tabs.entries[selectedTabIndex.value].text) {
                         "Upcoming" -> {
                             MovieFlowRow(Modifier, uiState.upcomingMovie) {
-                                onNavigation.invoke(it.id.toString())
+                                onNavigation.invoke(it.id)
                             }
                         }
 
                         "Top Rated" -> {
                             MovieFlowRow(Modifier, uiState.topRatedMovie) {
-                                onNavigation.invoke(it.id.toString())
+                                onNavigation.invoke(it.id)
                             }
                         }
 
                         "Popular" -> {
                             MovieFlowRow(Modifier, uiState.popularMovie) {
-                                onNavigation.invoke(it.id.toString())
+                                onNavigation.invoke(it.id)
                             }
                         }
 
                         else -> {
                             MovieFlowRow(Modifier, uiState.nowPlayingMovie) {
-                                onNavigation.invoke(it.id.toString())
+                                onNavigation.invoke(it.id)
                             }
                         }
                     }
@@ -317,69 +328,6 @@ fun HomeScreenContent(
         }
     }
 }
-
-//@OptIn(ExperimentalLayoutApi::class)
-//@Composable
-//fun NowPlayingMovies(
-//    modifier: Modifier,
-//    movies: List<Movie> = emptyList(),
-//    onclick: (Movie) -> Unit = {},
-//) {
-//    FlowRow(
-//        modifier = modifier.fillMaxSize(),
-//        horizontalArrangement = Arrangement.SpaceEvenly,
-//        verticalArrangement = Arrangement.spacedBy(14.sdp),
-//        maxItemsInEachRow = 3
-//    ) {
-//        movies.forEachIndexed { index, movie ->
-//            MovieCard(data = movie, index = index) {
-//                onclick.invoke(it)
-//            }
-//        }
-//    }
-//}
-//
-//@OptIn(ExperimentalLayoutApi::class)
-//@Composable
-//fun UpcomingMovies(
-//    modifier: Modifier,
-//    movies: List<Movie> = emptyList(),
-//    onclick: (Movie) -> Unit = {},
-//) {
-//    FlowRow(
-//        modifier = modifier.fillMaxSize(),
-//        horizontalArrangement = Arrangement.SpaceEvenly,
-//        verticalArrangement = Arrangement.spacedBy(14.sdp),
-//        maxItemsInEachRow = 3
-//    ) {
-//        movies.forEachIndexed { index, movie ->
-//            MovieCard(data = movie, index = index) {
-//                onclick.invoke(it)
-//            }
-//        }
-//    }
-//}
-//
-//@OptIn(ExperimentalLayoutApi::class)
-//@Composable
-//fun TopRatedMovies(
-//    modifier: Modifier,
-//    movies: List<Movie> = emptyList(),
-//    onclick: (Movie) -> Unit = {},
-//) {
-//    FlowRow(
-//        modifier = modifier.fillMaxSize(),
-//        horizontalArrangement = Arrangement.SpaceEvenly,
-//        verticalArrangement = Arrangement.spacedBy(14.sdp),
-//        maxItemsInEachRow = 3
-//    ) {
-//        movies.forEachIndexed { index, movie ->
-//            MovieCard(data = movie, index = index) {
-//                onclick.invoke(it)
-//            }
-//        }
-//    }
-//}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
