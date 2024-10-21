@@ -46,10 +46,10 @@ fun AppNavigation(
 fun NavGraphBuilder.mainGraph(navController: NavHostController, paddingValues: PaddingValues) {
     navigation(route = AppScreen.Main.route, startDestination = AppScreen.Home.route) {
         composable(route = AppScreen.Home.route) {
-//            HomeScreen(paddingValues) {
-//                navController.navigate("details/$it")
-//            }
-            MoreMovieScreen(paddingValues)
+            HomeScreen(paddingValues) {
+                navController.navigate("details/$it")
+            }
+            //MoreMovieScreen(paddingValues)
         }
         composable(route = AppScreen.Search.route) {
             SearchScreen(

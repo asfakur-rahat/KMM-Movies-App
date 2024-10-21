@@ -48,7 +48,7 @@ fun MainScreen() {
     }
     val bottomBarVisibility by remember(backStackEntry) {
         derivedStateOf {
-            currentRoute != AppScreen.Splash.route && currentRoute != AppScreen.Details.route && currentRoute != AppScreen.Home.route //TODO remove it when test done
+            currentRoute != AppScreen.Splash.route && currentRoute != AppScreen.Details.route
         }
     }
     println(bottomBarVisibility)

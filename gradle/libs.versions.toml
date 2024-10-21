@@ -2,7 +2,7 @@
 agp = "8.2.2"
 androidx-activityCompose = "1.9.2"
 androidx-ui-tooling = "1.7.3"
-compose-plugin = "1.6.11"
+compose-plugin = "1.7.0"
 koin = "4.0.0"
 koin-compose = "4.0.0"
 
