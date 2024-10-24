@@ -1,14 +1,34 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Movies
+## A Kotlin Multiplatform App to show about movies using TMDB Api
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+### Used Technology
+* Kotlin-Multiplatform
+* Compose-Multiplatform
+* Koin
+* Ktor
+* Room
+* Landscapist image loader
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+### Screens
+* Home Screen
+* Search Screen
+* WatchList Screen
+* Details Screen
 
+### UI Demo:
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+#### Splash & Home
+<img src="images/Splash.png" alt="SplashScreen" width="25%"/> &nbsp;
+<img src="images/Home.png" alt="HomeScreen" width="25%"/>
+
+#### Search Screen [ Empty & With Search Result ]
+<img src="images/Search_empty.png" alt="EmptySearchScreen" width="25%"/> &nbsp;
+<img src="images/Search_full.png" alt="ResultSearchScreen" width="25%"/>
+
+#### Watchlist Screen [ Empty & With Watchlist items ]
+<img src="images/WatchList.png" alt="EmptyWatchListScreen" width="25%"/> &nbsp;
+<img src="images/WatchList_items.png" alt="ResultWatchListScreen" width="25%"/>
+
+#### Movie Detail Screen
+<img src="images/Details.png" alt="MovieDetails" width="25%"/> &nbsp;
+<img src="images/Details_cast.png" alt="MovieDetailsCast" width="25%"/>

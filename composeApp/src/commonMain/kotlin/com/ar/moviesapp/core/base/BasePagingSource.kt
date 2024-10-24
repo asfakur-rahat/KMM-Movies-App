@@ -1,4 +1,4 @@
-package com.ar.moviesapp.data.remote.pageSource
+package com.ar.moviesapp.core.base
 
 import app.cash.paging.PagingSource
 import app.cash.paging.PagingSourceLoadParams
