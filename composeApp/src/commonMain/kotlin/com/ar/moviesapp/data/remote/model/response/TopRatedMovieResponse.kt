@@ -1,12 +1,13 @@
 package com.ar.moviesapp.data.remote.model.response
 
 import com.ar.moviesapp.domain.model.Movie
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class TopRatedMovieResponse(
-    val page: Int = 0,
-    val results: List<Movie> = emptyList(),
-    val total_pages: Int = 0,
-    val total_results: Int = 0,
+    var page: Int,
+    var results: List<Movie>,
+    @SerialName("total_pages") var totalPages: Int,
+    @SerialName("total_results") var totalResults: Int
 )

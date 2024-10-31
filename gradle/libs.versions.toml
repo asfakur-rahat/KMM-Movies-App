@@ -2,18 +2,19 @@
 agp = "8.2.2"
 androidx-activityCompose = "1.9.2"
 androidx-ui-tooling = "1.7.3"
-compose-plugin = "1.6.11"
+compose-plugin = "1.7.0"
 koin = "4.0.0"
 koin-compose = "4.0.0"
 
 kotlin = "2.0.20"
-ktor = "2.3.12"
+ktor = "3.0.0"
 landscapistCoil3 = "2.4.1"
 navigationCompose = "2.8.0-alpha10"
 ksp = "2.0.20-1.0.24"
 
 
 room = "2.7.0-alpha09"
+sdpSspComposeMultiplatform = "1.0.4"
 sqlite = "2.5.0-alpha09"
 
 [libraries]
@@ -33,6 +34,7 @@ navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-co
 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+sdp-ssp-compose-multiplatform = { module = "network.chaintech:sdp-ssp-compose-multiplatform", version.ref = "sdpSspComposeMultiplatform" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
 [plugins]

@@ -65,6 +65,11 @@ kotlin {
 
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
+
+            implementation(libs.sdp.ssp.compose.multiplatform)
+
+            implementation("app.cash.paging:paging-compose-common:3.3.0-alpha02-0.5.1")
+            implementation("app.cash.paging:paging-common:3.3.0-alpha02-0.5.1")
         }
     }
 }
@@ -116,6 +121,7 @@ room {
 
 dependencies {
     add("kspCommonMainMetadata", libs.androidx.room.compiler)
+    add("kspAndroid", libs.androidx.room.compiler)
 }
 
 //project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
@@ -124,28 +130,28 @@ dependencies {
 //    }
 //}
 
-tasks.withType<Test> {
-    if (name == "mergeDebugAndroidTestAssets") {
-        enabled = false
-    }
-}
-
-tasks.withType<Test> {
-    if (name == "copyRoomSchemasToAndroidTestAssetsDebugAndroidTest") {
-        enabled = false
-    }
-}
-
-tasks.whenTaskAdded {
-    if (name.contains("copyRoomSchemasToAndroidTestAssetsDebugAndroidTest")) {
-        enabled = false
-    }
-}
-
-gradle.taskGraph.whenReady {
-    allTasks.onEach { task ->
-        if (task.name.contains("androidTest") || task.name.contains("connectedAndroidTest")) {
-            task.enabled = false
-        }
-    }
-}
+//tasks.withType<Test> {
+//    if (name == "mergeDebugAndroidTestAssets") {
+//        enabled = false
+//    }
+//}
+//
+//tasks.withType<Test> {
+//    if (name == "copyRoomSchemasToAndroidTestAssetsDebugAndroidTest") {
+//        enabled = false
+//    }
+//}
+//
+//tasks.whenTaskAdded {
+//    if (name.contains("copyRoomSchemasToAndroidTestAssetsDebugAndroidTest")) {
+//        enabled = false
+//    }
+//}
+//
+//gradle.taskGraph.whenReady {
+//    allTasks.onEach { task ->
+//        if (task.name.contains("androidTest") || task.name.contains("connectedAndroidTest")) {
+//            task.enabled = false
+//        }
+//    }
+//}
